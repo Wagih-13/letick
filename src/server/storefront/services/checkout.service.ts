@@ -6,6 +6,7 @@ import { storefrontCartService } from "./cart.service";
 import { storefrontCartRepository } from "../repositories/cart.repository";
 import { auth } from "@/auth";
 import { notificationsService } from "../../services/notifications.service";
+import { emailsService } from "../../services/emails.service";
 
 export interface PlaceOrderInput {
   cartId: string;
@@ -202,6 +203,20 @@ export class StorefrontCheckoutService {
           },
           { userId },
         );
+      }
+    } catch {}
+
+    try {
+      if (order) {
+        const to = process.env.NOTIFICATION_EMAIL || process.env.EMAIL_TO || process.env.EMAIL_USER || process.env.EMAIL_FROM || "";
+        if (to) {
+          await emailsService.send({
+            to,
+            subject: `New order ${orderNumber}`,
+            html: `<div><p>New order <strong>${orderNumber}</strong> has been placed.</p><p>Total: <strong>${totalAmount.toFixed(2)} USD</strong></p></div>`,
+            metadata: { orderId: order.id, orderNumber },
+          });
+        }
       }
     } catch {}
 

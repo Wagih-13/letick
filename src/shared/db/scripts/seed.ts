@@ -31,6 +31,14 @@ async function seed() {
         description: "Full system access with all permissions",
         isSystem: true,
       })
+      .onConflictDoUpdate({
+        target: schema.roles.slug,
+        set: {
+          description: "Full system access with all permissions" as any,
+          isSystem: true as any,
+          updatedAt: new Date() as any,
+        },
+      })
       .returning({ id: schema.roles.id });
 
     const [adminRole] = await db
@@ -41,6 +49,14 @@ async function seed() {
         description: "Administrative access to manage the platform",
         isSystem: true,
       })
+      .onConflictDoUpdate({
+        target: schema.roles.slug,
+        set: {
+          description: "Administrative access to manage the platform" as any,
+          isSystem: true as any,
+          updatedAt: new Date() as any,
+        },
+      })
       .returning({ id: schema.roles.id });
 
     const [userRole] = await db
@@ -50,6 +66,14 @@ async function seed() {
         slug: "user",
         description: "Standard customer access",
         isSystem: true,
+      })
+      .onConflictDoUpdate({
+        target: schema.roles.slug,
+        set: {
+          description: "Standard customer access" as any,
+          isSystem: true as any,
+          updatedAt: new Date() as any,
+        },
       })
       .returning({ id: schema.roles.id });
 
