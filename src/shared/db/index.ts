@@ -17,7 +17,10 @@ const pool = new Pool({
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
-  ssl: false,
+   connectionString: process.env.DATABASE_URL,
+  ssl: { 
+    rejectUnauthorized: false // مهم جداً!
+  }
 });
 
 // Initialize Drizzle instance
