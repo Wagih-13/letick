@@ -7,8 +7,8 @@ async function dropDatabase() {
   const client = new Client({
     host: process.env.DB_HOST || "localhost",
     port: Number(process.env.DB_PORT) || 5432,
-    user: process.env.DB_USER || "postgres",
-    password: process.env.DB_PASSWORD || "postgres",
+    user: process.env.DB_USER || "wagih",
+    password: process.env.DB_PASSWORD || "AlAl@!@!12!@",
     database: "postgres",
   });
 
@@ -16,7 +16,7 @@ async function dropDatabase() {
     await client.connect();
     console.log("✅ Connected to PostgreSQL");
 
-    const dbName = process.env.DB_NAME || "nextecom_db";
+    const dbName = process.env.DB_NAME || "modestwear_db";
 
     // Terminate all connections to the database
     await client.query(`
@@ -46,3 +46,4 @@ dropDatabase()
     console.error("❌ Database drop failed:", error);
     process.exit(1);
   });
+

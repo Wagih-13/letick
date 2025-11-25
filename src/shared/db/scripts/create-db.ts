@@ -7,8 +7,8 @@ async function createDatabase() {
   const client = new Client({
     host: process.env.DB_HOST || "localhost",
     port: Number(process.env.DB_PORT) || 5432,
-    user: process.env.DB_USER || "postgres",
-    password: process.env.DB_PASSWORD || "postgres",
+    user: process.env.DB_USER || "wagih",
+    password: process.env.DB_PASSWORD || "AlAl@!@!12!@",
     database: "postgres", // Connect to default postgres database
   });
 
@@ -16,7 +16,7 @@ async function createDatabase() {
     await client.connect();
     console.log("✅ Connected to PostgreSQL");
 
-    const dbName = process.env.DB_NAME || "nextecom_db";
+    const dbName = process.env.DB_NAME || "modestwear_db";
 
     // Check if database exists
     const res = await client.query(`SELECT 1 FROM pg_database WHERE datname = $1`, [dbName]);
@@ -44,3 +44,4 @@ createDatabase()
     console.error("❌ Database setup failed:", error);
     process.exit(1);
   });
+

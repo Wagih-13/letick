@@ -10,7 +10,7 @@ async function init() {
 
   if (isConnected) {
     console.log("✅ Database connection successful!");
-    console.log(`📊 Connected to: ${process.env.DB_NAME || "nextecom_db"}`);
+    console.log(`📊 Connected to: ${process.env.DB_NAME || "modestwear_db"}`);
   } else {
     console.error("❌ Database connection failed!");
     process.exit(1);
