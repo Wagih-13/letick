@@ -163,7 +163,7 @@ export function HeroSection() {
     };
   }, []);
   return (
-    <section className=" sm:-mt-15 lg:-mt-10 lg:relative" style={{marginTop:"10px", ["--reveal-duration" as any]: `${REVEAL_DURATION}ms`, ["--fade-dur" as any]: `${FADE_DURATION}ms` }}>
+    <section className=" sm:-mt-15 lg:-mt-10 lg:relative" style={{ ["--reveal-duration" as any]: `${REVEAL_DURATION}ms`, ["--fade-dur" as any]: `${FADE_DURATION}ms` }}>
       <div ref={sectionRef} className="container py-10 sm:py-12 lg:h-[100dvh] lg:py-0 flex items-start">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-10">
           {/* Left column */}
@@ -183,11 +183,11 @@ export function HeroSection() {
             </div>
             <div ref={ref} className="mt-10 grid grid-cols-3 divide-x divide-border/60">
               <div className="px-6">
-                <Counter value={200} suffix="+" inView={true} />
-                <div className="mt-1 text-xs sm:text-sm text-muted-foreground/80">International Brands</div>
+                <Counter value={40} suffix="+" inView={true} />
+                <div className="mt-1 text-xs sm:text-sm text-muted-foreground/80">Unique Designs</div>
               </div>
               <div className="px-6">
-                <Counter value={2000} suffix="+" inView={true} />
+                <Counter value={100} suffix="+" inView={true} />
                 <div className="mt-1 text-xs sm:text-sm text-muted-foreground/80">High-Quality Products</div>
               </div>
               <div className="px-6">

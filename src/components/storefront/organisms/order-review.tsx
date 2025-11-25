@@ -15,6 +15,7 @@ interface OrderReviewProps {
   onBack: () => void;
   onPlaceOrder: () => void;
   isPlacingOrder: boolean;
+  effectiveShippingAmount: number;
 }
 
 export function OrderReview({
@@ -25,8 +26,10 @@ export function OrderReview({
   onBack,
   onPlaceOrder,
   isPlacingOrder,
+  effectiveShippingAmount,
 }: OrderReviewProps) {
   const { format } = useCurrency();
+  const computedTotal = cart.totalAmount + (Number(effectiveShippingAmount) || 0);
   return (
     <div className="space-y-6">
       {/* Shipping Address */}
@@ -51,7 +54,7 @@ export function OrderReview({
             <p className="text-sm text-muted-foreground">{shippingMethod.description}</p>
           </div>
           <p className="font-semibold">
-            {Number(shippingMethod.price) === 0 ? "FREE" : `${format(Number(shippingMethod.price), { codeOverride: cart.currency })}`}
+            {Number(effectiveShippingAmount) === 0 ? "FREE" : `${format(Number(effectiveShippingAmount), { codeOverride: cart.currency })}`}
           </p>
         </div>
       </div>
@@ -89,6 +92,13 @@ export function OrderReview({
                 {item.variantName && (
                   <p className="text-xs text-muted-foreground">{item.variantName}</p>
                 )}
+                {item.variantOptions && Object.keys(item.variantOptions).length > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {Object.entries(item.variantOptions)
+                      .map(([k, v]) => `${k}: ${v}`)
+                      .join(" • ")}
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
               </div>
               <p className="font-semibold text-sm">{format(item.totalPrice, { codeOverride: cart.currency })}</p>
@@ -113,7 +123,7 @@ export function OrderReview({
           <div className="flex justify-between">
             <span className="text-muted-foreground">Shipping</span>
             <span>
-              {Number(shippingMethod.price) === 0 ? "FREE" : `${format(Number(shippingMethod.price), { codeOverride: cart.currency })}`}
+              {Number(effectiveShippingAmount) === 0 ? "FREE" : `${format(Number(effectiveShippingAmount), { codeOverride: cart.currency })}`}
             </span>
           </div>
           <div className="flex justify-between">
@@ -123,7 +133,7 @@ export function OrderReview({
           <Separator className="my-2" />
           <div className="flex justify-between text-lg font-semibold">
             <span>Total</span>
-            <span>{format(cart.totalAmount, { codeOverride: cart.currency })}</span>
+            <span>{format(computedTotal, { codeOverride: cart.currency })}</span>
           </div>
         </div>
       </div>

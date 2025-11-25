@@ -58,6 +58,16 @@ export class StorefrontCheckoutService {
     // Get authenticated user (if any)
     const session = await auth();
     const userId = session?.user?.id as string | undefined;
+    // Validate userId against DB to avoid FK violations when DB was reset
+    let validUserId = userId;
+    if (validUserId) {
+      const [u] = await db
+        .select({ id: schema.users.id })
+        .from(schema.users)
+        .where(eq(schema.users.id, validUserId))
+        .limit(1);
+      if (!u) validUserId = undefined;
+    }
 
     // Insert order
     const normalizePaymentMethod = (raw: string | undefined): any => {
@@ -96,10 +106,10 @@ export class StorefrontCheckoutService {
         shippingAmount: shippingAmount.toFixed(2),
         discountAmount: discountAmount.toFixed(2),
         totalAmount: totalAmount.toFixed(2),
-        currency: "USD",
+        currency: (cart as any)?.currency || "EGP",
         customerEmail: input.customerEmail || (session as any)?.user?.email || null,
         customerPhone: input.customerPhone || (input as any)?.shippingAddress?.phone || null,
-        userId: userId || null,
+        userId: validUserId || null,
       })
       .returning();
 
@@ -192,31 +202,44 @@ export class StorefrontCheckoutService {
 
     // Notify user (if logged in)
     try {
-      if (userId && order) {
+      if (validUserId && order) {
         await notificationsService.create(
           {
-            userId,
+            userId: validUserId,
             type: "order_created" as any,
             title: "Order placed",
             message: `Your order ${orderNumber} has been placed successfully`,
             actionUrl: `/account/orders/${order.id}`,
           },
-          { userId },
+          { userId: validUserId },
         );
       }
     } catch {}
 
     try {
       if (order) {
-        const to = process.env.NOTIFICATION_EMAIL || process.env.EMAIL_TO || process.env.EMAIL_USER || process.env.EMAIL_FROM || "";
-        if (to) {
-          await emailsService.send({
-            to,
-            subject: `New order ${orderNumber}`,
-            html: `<div><p>New order <strong>${orderNumber}</strong> has been placed.</p><p>Total: <strong>${totalAmount.toFixed(2)} USD</strong></p></div>`,
-            metadata: { orderId: order.id, orderNumber },
-          });
-        }
+        const sa: any = (input as any).shippingAddress || {};
+        const customerName = `${sa?.firstName || ""} ${sa?.lastName || ""}`.trim() || undefined;
+        const customerEmail = (input.customerEmail as any) || (session as any)?.user?.email || undefined;
+        const customerPhone = (input.customerPhone as any) || sa?.phone || undefined;
+        const shippingAddress = sa && (sa.addressLine1 || sa.city || sa.country)
+          ? `${sa.addressLine1 || ""}${sa.addressLine2 ? ", " + sa.addressLine2 : ""}, ${sa.city || ""}${sa.state ? ", " + sa.state : ""} ${sa.postalCode || ""}, ${sa.country || ""}`.replace(/,\s*,/g, ", ").replace(/^,\s*|\s*,\s*$/g, "")
+          : undefined;
+        const items = cart.items.map((it) => ({ productName: it.productName, quantity: it.quantity, price: it.unitPrice }));
+
+        await emailsService.sendNewOrderNotification({
+          orderId: order.id,
+          orderNumber,
+          customerName,
+          customerEmail,
+          customerPhone,
+          totalAmount,
+          deliveryFee: shippingAmount,
+          orderDate: (order as any)?.createdAt || new Date(),
+          orderStatus: (order as any)?.status || "pending",
+          items,
+          shippingAddress,
+        }, { userId: validUserId });
       }
     } catch {}
 

@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/select";
 import { Package, Eye, Download, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
+import { useCurrency } from "@/components/storefront/providers/currency-provider";
 
 export default function OrdersPage() {
+  const { format } = useCurrency();
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -129,7 +131,7 @@ export default function OrdersPage() {
                 <div className="flex items-center gap-3">
                   {getStatusBadge(order.status)}
                   <span className="text-lg font-bold">
-                    ${order.total.toFixed(2)}
+                    {format(order.total)}
                   </span>
                 </div>
               </div>
@@ -165,7 +167,7 @@ export default function OrdersPage() {
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">{item.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          Qty: {item.quantity} × ${item.price.toFixed(2)}
+                          Qty: {item.quantity} × {format(item.price)}
                         </p>
                       </div>
                     </div>

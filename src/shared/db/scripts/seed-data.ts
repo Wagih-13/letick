@@ -42,16 +42,10 @@ export const PRODUCTS_DATA = [
 ];
 
 export const USERS_DATA = [
-  { email: "admin@nextecom.com", firstName: "Super", lastName: "Admin", role: "super_admin", password: "Admin@123" },
+  { email: "admin.control.office@modestwear.com", firstName: "Super", lastName: "Admin", role: "super_admin", password: "N9p#4Qz!Lw@82KmE" },
   { email: "john.manager@nextecom.com", firstName: "John", lastName: "Manager", role: "admin", password: "Manager@123" },
   { email: "sarah.staff@nextecom.com", firstName: "Sarah", lastName: "Staff", role: "admin", password: "Staff@123" },
-  { email: "mike.johnson@gmail.com", firstName: "Mike", lastName: "Johnson", role: "user", password: "User@123" },
-  { email: "emma.davis@gmail.com", firstName: "Emma", lastName: "Davis", role: "user", password: "User@123" },
-  { email: "david.wilson@gmail.com", firstName: "David", lastName: "Wilson", role: "user", password: "User@123" },
-  { email: "lisa.brown@gmail.com", firstName: "Lisa", lastName: "Brown", role: "user", password: "User@123" },
-  { email: "james.taylor@gmail.com", firstName: "James", lastName: "Taylor", role: "user", password: "User@123" },
-  { email: "sophia.martin@gmail.com", firstName: "Sophia", lastName: "Martin", role: "user", password: "User@123" },
-  { email: "william.clark@gmail.com", firstName: "William", lastName: "Clark", role: "user", password: "User@123" },
+  { email: "mike.johnson@gmail.com", firstName: "Mike", lastName: "Johnson", role: "user", password: "User@123" }
 ];
 
 export const SHIPPING_METHODS_DATA = [
@@ -69,12 +63,12 @@ export const EMAIL_TEMPLATES_DATA = [
 ];
 
 export const SYSTEM_SETTINGS_DATA = [
-  { key: "site_name", value: "NextEcom", type: "string", isPublic: true },
+  { key: "site_name", value: "Modest Wear", type: "string", isPublic: true },
   { key: "site_description", value: "Modern E-commerce Platform", type: "string", isPublic: true },
-  { key: "currency", value: "USD", type: "string", isPublic: true },
-  { key: "tax_rate", value: "0.08", type: "number", isPublic: true },
-  { key: "free_shipping_threshold", value: "50", type: "number", isPublic: true },
-  { key: "low_stock_threshold", value: "10", type: "number", isPublic: false },
+  { key: "currency", value: "EGY", type: "string", isPublic: true },
+  { key: "tax_rate", value: "0", type: "number", isPublic: true },
+  { key: "free_shipping_threshold", value: "3500", type: "number", isPublic: true },
+  { key: "low_stock_threshold", value: "5", type: "number", isPublic: false },
   { key: "maintenance_mode", value: "false", type: "boolean", isPublic: true },
 ];
 

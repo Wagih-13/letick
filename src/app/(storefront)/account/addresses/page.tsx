@@ -5,22 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Trash2, Check } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+/* country select removed */
 import type { Address } from "@/types/storefront";
 
 export default function AddressesPage() {
@@ -37,7 +25,7 @@ export default function AddressesPage() {
     city: "",
     state: "",
     postalCode: "",
-    country: "US",
+    country: "EG",
     phone: "",
     isDefault: false,
   });
@@ -54,7 +42,7 @@ export default function AddressesPage() {
         city: "",
         state: "",
         postalCode: "",
-        country: "US",
+        country: "EG",
         phone: "",
         isDefault: true,
       }
@@ -277,25 +265,6 @@ export default function AddressesPage() {
                   }
                   required
                 />
-              </div>
-              <div>
-                <Label htmlFor="country">Country *</Label>
-                <Select
-                  value={formData.country}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, country: value })
-                  }
-                >
-                  <SelectTrigger id="country">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="US">United States</SelectItem>
-                    <SelectItem value="CA">Canada</SelectItem>
-                    <SelectItem value="GB">United Kingdom</SelectItem>
-                    <SelectItem value="AU">Australia</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </div>
 

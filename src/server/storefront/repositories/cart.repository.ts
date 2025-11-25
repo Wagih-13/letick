@@ -63,6 +63,7 @@ export class StorefrontCartRepository {
           userId: validUserId || null,
           sessionId: sessionId || null,
           status: "active",
+          currency: "EGP",
           subtotal: "0.00",
           taxAmount: "0.00",
           shippingAmount: "0.00",
@@ -70,6 +71,15 @@ export class StorefrontCartRepository {
           totalAmount: "0.00",
         })
         .returning();
+    }
+
+    // Ensure storefront default currency is EGP for existing carts
+    if (cart && (cart as any).currency !== "EGP") {
+      await db
+        .update(schema.carts)
+        .set({ currency: "EGP", updatedAt: new Date() })
+        .where(eq(schema.carts.id, (cart as any).id));
+      (cart as any).currency = "EGP";
     }
 
     return cart;

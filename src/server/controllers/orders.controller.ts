@@ -30,7 +30,7 @@ const updateSchema = z.object({
 export class OrdersController {
   static async list(request: NextRequest) {
     try {
-      await requirePermission(request, "orders.manage");
+      await requirePermission(request, "orders.view");
       const query = validateQuery(request.nextUrl.searchParams, listQuerySchema);
       const result = await ordersService.list(query);
       if (!result.success) return NextResponse.json({ success: false, error: result.error }, { status: 400 });
@@ -42,7 +42,7 @@ export class OrdersController {
 
   static async details(request: NextRequest, id: string) {
     try {
-      await requirePermission(request, "orders.manage");
+      await requirePermission(request, "orders.view");
       const result = await ordersService.getDetails(id);
       if (!result.success) return NextResponse.json({ success: false, error: result.error }, { status: 404 });
       return successResponse(result.data);
@@ -53,7 +53,7 @@ export class OrdersController {
 
   static async get(request: NextRequest, id: string) {
     try {
-      await requirePermission(request, "orders.manage");
+      await requirePermission(request, "orders.view");
       const result = await ordersService.get(id);
       if (!result.success) return NextResponse.json({ success: false, error: result.error }, { status: 404 });
       return successResponse(result.data);
@@ -64,7 +64,7 @@ export class OrdersController {
 
   static async update(request: NextRequest, id: string) {
     try {
-      await requirePermission(request, "orders.manage");
+      await requirePermission(request, "orders.update");
       const body = await validateBody(request, updateSchema);
       const result = await ordersService.update(id, body);
       if (!result.success) return NextResponse.json({ success: false, error: result.error }, { status: 400 });
@@ -76,7 +76,7 @@ export class OrdersController {
 
   static async remove(request: NextRequest, id: string) {
     try {
-      await requirePermission(request, "orders.manage");
+      await requirePermission(request, "orders.delete");
       const result = await ordersService.remove(id);
       if (!result.success) return NextResponse.json({ success: false, error: result.error }, { status: 404 });
       return successResponse(result.data);
@@ -87,7 +87,7 @@ export class OrdersController {
 
   static async metrics(request: NextRequest) {
     try {
-      await requirePermission(request, "orders.manage");
+      await requirePermission(request, "orders.view");
       const query = validateQuery(request.nextUrl.searchParams, listQuerySchema);
 
       const filters: any[] = [];

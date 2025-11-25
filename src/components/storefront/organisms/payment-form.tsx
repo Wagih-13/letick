@@ -14,7 +14,7 @@ interface PaymentFormProps {
 }
 
 export function PaymentForm({ onSubmit, onBack }: PaymentFormProps) {
-  const [paymentType, setPaymentType] = useState("card");
+  const [paymentType, setPaymentType] = useState("cod");
   const [formData, setFormData] = useState({
     cardNumber: "",
     cardName: "",
@@ -56,11 +56,11 @@ export function PaymentForm({ onSubmit, onBack }: PaymentFormProps) {
         {/* Payment Type */}
         <RadioGroup value={paymentType} onValueChange={setPaymentType}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center space-x-2 p-4 border-2 rounded-lg cursor-pointer">
-              <RadioGroupItem value="card" id="card" />
-              <Label htmlFor="card" className="flex items-center gap-2 cursor-pointer flex-1">
+            <div className="flex items-center space-x-2 p-4 border-2 rounded-lg cursor-not-allowed opacity-50">
+              <RadioGroupItem value="card" id="card" disabled />
+              <Label htmlFor="card" className="flex items-center gap-2 cursor-not-allowed flex-1">
                 <CreditCard className="h-5 w-5" />
-                <span>Credit/Debit Card</span>
+                <span>Credit/Debit Card (Coming Soon)</span>
               </Label>
             </div>
             <div className="flex items-center space-x-2 p-4 border-2 rounded-lg cursor-pointer">

@@ -8,20 +8,31 @@ import * as schema from "./schema";
 dotenv.config();
 
 // Create PostgreSQL connection pool
-const pool = new Pool({
-  host: process.env.DB_HOST || "localhost",
-  port: Number(process.env.DB_PORT) || 5432,
-  user: process.env.DB_USER || "postgres",
-  password: process.env.DB_PASSWORD || "Yarasara+ahmed",
-  database: process.env.DB_NAME || "nextecom_db",
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-   connectionString: process.env.DATABASE_URL,
-  ssl: { 
-    rejectUnauthorized: false // مهم جداً!
-  }
-});
+const hasConnStr = !!process.env.DATABASE_URL;
+const sslEnv = String(process.env.DB_SSL || process.env.PGSSLMODE || "").toLowerCase();
+const sslRequired = sslEnv === "true" || sslEnv === "require" || (process.env.DATABASE_URL?.includes("sslmode=require") ?? false);
+
+const pool = new Pool(
+  hasConnStr
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        max: 20,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 2000,
+        ssl: sslRequired ? { rejectUnauthorized: false } : false,
+      }
+    : {
+        host: process.env.DB_HOST || "localhost",
+        port: Number(process.env.DB_PORT) || 5432,
+        user: process.env.DB_USER || "postgres",
+        password: process.env.DB_PASSWORD || "Yarasara+ahmed",
+        database: process.env.DB_NAME || "nextecom_db",
+        max: 20,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 2000,
+        ssl: sslRequired ? { rejectUnauthorized: false } : false,
+      },
+);
 
 // Initialize Drizzle instance
 export const db = drizzle(pool, { schema });

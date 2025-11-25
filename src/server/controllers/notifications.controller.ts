@@ -5,7 +5,7 @@ import { db } from "@/shared/db";
 import * as schema from "@/shared/db/schema";
 import { sql } from "drizzle-orm";
 import { handleRouteError, successResponse } from "../utils/response";
-import { requirePermission } from "../utils/rbac";
+import { requireAnyPermission } from "../utils/rbac";
 
 const listQuerySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
@@ -64,7 +64,7 @@ const broadcastSchema = z
 export class NotificationsController {
   static async list(request: NextRequest) {
     try {
-      const session = await requirePermission(request, "notifications.manage");
+      const session = await requireAnyPermission(request, ["reports.view", "orders.view"]);
       const query = listQuerySchema.parse(Object.fromEntries(request.nextUrl.searchParams.entries()));
       const effective = { ...query } as any;
       if (query.scope === "mine" && !query.userId) {
@@ -83,7 +83,7 @@ export class NotificationsController {
 
   static async create(request: NextRequest) {
     try {
-      const session = await requirePermission(request, "notifications.manage");
+      const session = await requireAnyPermission(request, ["orders.update", "reports.view"]);
       const body = await request.json().catch(() => ({}));
       const input = createSchema.parse(body || {});
       const result = await notificationsService.create(input, {
@@ -100,7 +100,7 @@ export class NotificationsController {
 
   static async markRead(request: NextRequest, id: string) {
     try {
-      const session = await requirePermission(request, "notifications.manage");
+      const session = await requireAnyPermission(request, ["orders.update", "reports.view"]);
       const result = await notificationsService.markRead(id, {
         userId: (session.user as any)?.id,
         ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
@@ -115,7 +115,7 @@ export class NotificationsController {
 
   static async markAll(request: NextRequest) {
     try {
-      const session = await requirePermission(request, "notifications.manage");
+      const session = await requireAnyPermission(request, ["orders.update", "reports.view"]);
       const userId = (session.user as any)?.id as string;
       const result = await notificationsService.markAllRead(userId, {
         userId,
@@ -131,7 +131,7 @@ export class NotificationsController {
 
   static async archive(request: NextRequest, id: string) {
     try {
-      const session = await requirePermission(request, "notifications.manage");
+      const session = await requireAnyPermission(request, ["orders.update", "reports.view"]);
       const result = await notificationsService.archive(id, {
         userId: (session.user as any)?.id,
         ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
@@ -146,7 +146,7 @@ export class NotificationsController {
 
   static async remove(request: NextRequest, id: string) {
     try {
-      const session = await requirePermission(request, "notifications.manage");
+      const session = await requireAnyPermission(request, ["orders.update", "reports.view"]);
       const result = await notificationsService.remove(id, {
         userId: (session.user as any)?.id,
         ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
@@ -161,7 +161,7 @@ export class NotificationsController {
 
   static async broadcastToRole(request: NextRequest) {
     try {
-      const session = await requirePermission(request, "notifications.manage");
+      const session = await requireAnyPermission(request, ["orders.update", "reports.view"]);
       const body = await request.json().catch(() => ({}));
       const input = broadcastSchema.parse(body || {});
       const roleSlugs = input.all ? [] : input.roleSlugs ?? (input.roleSlug ? [input.roleSlug] : []);
@@ -182,7 +182,7 @@ export class NotificationsController {
 
   static async metrics(request: NextRequest) {
     try {
-      const session = await requirePermission(request, "notifications.manage");
+      const session = await requireAnyPermission(request, ["reports.view", "orders.view"]);
       const query = listQuerySchema.partial().parse(Object.fromEntries(request.nextUrl.searchParams.entries()));
 
       const filters: any[] = [];

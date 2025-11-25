@@ -42,6 +42,7 @@ export const authConfig = {
           token.id = (user as any).id;
           token.roles = (user as any).roles || [];
           token.permissions = (user as any).permissions || [];
+          ;(token as any).image = (user as any).image || (user as any).avatar || (token as any).image;
         } else if (user.email) {
           // For OAuth users, map to our DB user to get the correct DB id
           try {
@@ -52,6 +53,7 @@ export const authConfig = {
               token.email = dbUser.email;
               token.roles = dbUser.roles?.map((r) => r.slug) || [];
               token.permissions = dbUser.permissions?.map((p) => p.slug) || [];
+              ;(token as any).image = dbUser.avatar || (token as any).image;
             }
           } catch {}
         }
@@ -67,13 +69,14 @@ export const authConfig = {
             token.email = dbUser.email;
             (token as any).roles = dbUser.roles?.map((r) => r.slug) || [];
             (token as any).permissions = dbUser.permissions?.map((p) => p.slug) || [];
+            ;(token as any).image = dbUser.avatar || (token as any).image;
           }
         } catch {}
       }
 
       // Handle session updates
       if (trigger === "update" && session) {
-        token = { ...token, ...session };
+        token = { ...token, ...session } as any;
       }
 
       return token;
@@ -84,6 +87,7 @@ export const authConfig = {
         session.user.email = token.email as string;
         session.user.roles = token.roles as string[];
         session.user.permissions = token.permissions as string[];
+        (session.user as any).image = (token as any).image as string | undefined;
       }
       return session;
     },

@@ -8,9 +8,11 @@ import { useEffect, useState } from "react";
 import { useWishlistStore } from "@/stores/wishlist.store";
 import { useCartStore } from "@/stores/cart.store";
 import { useSession } from "next-auth/react";
+import { useCurrency } from "@/components/storefront/providers/currency-provider";
 
 export default function AccountDashboardPage() {
   const { data: session } = useSession();
+  const { format } = useCurrency();
   const [displayName, setDisplayName] = useState<string>("");
   const [stats, setStats] = useState({
     totalOrders: 0,
@@ -230,7 +232,7 @@ export default function AccountDashboardPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold">${order.total.toFixed(2)}</p>
+                  <p className="font-semibold">{format(order.total)}</p>
                   <p className="text-sm text-muted-foreground">{order.status}</p>
                 </div>
               </div>

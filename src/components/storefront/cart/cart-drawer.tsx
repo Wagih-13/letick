@@ -114,7 +114,7 @@ export function CartDrawer() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium truncate">{p.name}</p>
-                          <p className="text-xs text-muted-foreground">${p.price.toFixed(2)}</p>
+                          <p className="text-xs text-muted-foreground">{format(Number(p.price || 0))}</p>
                         </div>
                       </Link>
                     ))}

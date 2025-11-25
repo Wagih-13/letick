@@ -137,8 +137,8 @@ export function CartSummary({ cart }: CartSummaryProps) {
       {/* Additional Info */}
       <div className="mt-4 space-y-2 text-xs text-muted-foreground">
         <p>• Taxes calculated at checkout</p>
-        <p>• Free shipping on orders over $50</p>
-        <p>• Secure checkout with SSL encryption</p>
+        <p>• Free shipping on orders over {format(2000, { codeOverride: cart.currency })}</p>
+        {/* <p>• Secure checkout with SSL encryption</p> */}
       </div>
     </div>
   );

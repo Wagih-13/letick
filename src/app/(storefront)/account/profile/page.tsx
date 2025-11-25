@@ -5,18 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useSession } from "next-auth/react";
+import { useRef } from "react";
 
 export default function ProfilePage() {
+  const { update } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
   });
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -50,24 +56,26 @@ export default function ProfilePage() {
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       alert("Passwords don't match");
       return;
     }
-
     setIsLoading(true);
-    
-    // TODO: API call to update password
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    setIsLoading(false);
-    setPasswordData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-    alert("Password updated successfully!");
+    try {
+      const res = await fetch("/api/storefront/account/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword: passwordData.currentPassword, newPassword: passwordData.newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data?.success) throw new Error(data?.error?.message || "Failed to update password");
+      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      alert("Password updated successfully!");
+    } catch (err: any) {
+      alert(err?.message || "Failed to update password");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -84,6 +92,7 @@ export default function ProfilePage() {
             email: data.data.email || "",
             phone: data.data.phone || "",
           });
+          setAvatarUrl(data.data.avatar || "");
         }
       } catch {}
     })();
@@ -97,6 +106,34 @@ export default function ProfilePage() {
     const l = formData.lastName?.[0] || "";
     return `${f}${l}`.toUpperCase();
   };
+
+  async function onPickFile() {
+    try {
+      fileInputRef.current?.click();
+    } catch {}
+  }
+
+  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploading(true);
+      const fd = new FormData();
+      fd.append("avatar", file);
+      const res = await fetch("/api/storefront/account/profile/avatar", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok || !data?.success) throw new Error(data?.error?.message || "Upload failed");
+      const url = data?.data?.avatar || "";
+      setAvatarUrl(url);
+      try { await update?.({ image: url } as any); } catch {}
+      alert("Profile photo updated");
+    } catch (err: any) {
+      alert(err?.message || "Failed to upload photo");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -118,14 +155,15 @@ export default function ProfilePage() {
         <CardContent>
           <div className="flex items-center gap-6">
             <Avatar className="h-24 w-24">
+              {avatarUrl ? <AvatarImage src={avatarUrl} alt="Profile photo" /> : null}
               <AvatarFallback className="text-2xl">
                 {getInitials()}
               </AvatarFallback>
             </Avatar>
             <div>
-              <Button variant="outline">
-                <Camera className="mr-2 h-4 w-4" />
-                Change Photo
+              <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={onFileChange} />
+              <Button variant="outline" onClick={onPickFile} disabled={uploading}>
+                {uploading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Uploading...</>) : (<><Camera className="mr-2 h-4 w-4" />Change Photo</>)}
               </Button>
               <p className="text-sm text-muted-foreground mt-2">
                 JPG, GIF or PNG. Max size of 800K

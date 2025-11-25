@@ -4,13 +4,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { Address } from "@/types/storefront";
 import { toast } from "sonner";
@@ -76,7 +69,7 @@ export function ShippingForm({ initialData, onSubmit }: ShippingFormProps) {
       city: "",
       state: "",
       postalCode: "",
-      country: "US",
+      country: "EG",
       phone: "",
       email: "",
     }
@@ -115,7 +108,6 @@ export function ShippingForm({ initialData, onSubmit }: ShippingFormProps) {
       "city",
       "state",
       "postalCode",
-      "country",
       "phone",
       "email",
     ];
@@ -255,29 +247,7 @@ export function ShippingForm({ initialData, onSubmit }: ShippingFormProps) {
           </div>
         </div>
 
-        {/* Country */}
-        <div>
-          <Label htmlFor="country">
-            Country <span className="text-destructive">*</span>
-          </Label>
-          <Select
-            value={formData.country}
-            onValueChange={(value) => handleChange("country", value)}
-          >
-            <SelectTrigger id="country">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="US">United States</SelectItem>
-              <SelectItem value="CA">Canada</SelectItem>
-              <SelectItem value="GB">United Kingdom</SelectItem>
-              <SelectItem value="AU">Australia</SelectItem>
-            </SelectContent>
-          </Select>
-          {errors.country && (
-            <p className="mt-1 text-xs text-destructive">{errors.country}</p>
-          )}
-        </div>
+        {/* Country removed - defaulting to EG server-side */}
 
         {/* Contact */}
         <div>

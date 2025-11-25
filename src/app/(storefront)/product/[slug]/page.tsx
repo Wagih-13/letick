@@ -17,6 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   
   try {
+    
     const product: Product = await api.get(`/api/storefront/products/${slug}`);
     
     return {

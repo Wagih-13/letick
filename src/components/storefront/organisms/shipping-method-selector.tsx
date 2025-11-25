@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Truck, Package, Zap } from "lucide-react";
 import { toast } from "sonner";
 import type { ShippingMethod } from "@/types/storefront";
+import { useCurrency } from "@/components/storefront/providers/currency-provider";
 
 interface ShippingMethodSelectorProps {
   selectedMethod: ShippingMethod | null;
@@ -26,6 +27,7 @@ export function ShippingMethodSelector({
   const [methods, setMethods] = useState<ApiMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { format } = useCurrency();
 
   useEffect(() => {
     let mounted = true;
@@ -126,7 +128,7 @@ export function ShippingMethodSelector({
                         {method.price === 0 ? (
                           <span className="text-green-600">FREE</span>
                         ) : (
-                          `$${Number(method.price).toFixed(2)}`
+                          format(Number(method.price))
                         )}
                       </div>
                     </Label>

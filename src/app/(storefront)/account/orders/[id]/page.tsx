@@ -8,8 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Download, Package, MapPin, CreditCard, Truck, ChevronDown, ChevronUp } from "lucide-react";
+import { useCurrency } from "@/components/storefront/providers/currency-provider";
 
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { format } = useCurrency();
   const [orderId, setOrderId] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -145,27 +147,27 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                         SKU: {item.sku}
                       </p>
                       <p className="text-sm mt-1">
-                        Qty: {item.quantity} × ${item.price.toFixed(2)}
+                        Qty: {item.quantity} × {format(Number(item.price))}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">${item.total.toFixed(2)}</p>
+                      <p className="font-semibold">{format(Number(item.total))}</p>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
-                <span>${Number(order.shipping || 0).toFixed(2)}</span>
+                <span>{format(Number(order.shipping || 0))}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Tax</span>
-                <span>${order.tax.toFixed(2)}</span>
+                <span>{format(Number(order.tax))}</span>
               </div>
               <Separator className="my-2" />
               <div className="flex justify-between text-base font-semibold">
                 <span>Total</span>
-                <span>${order.total.toFixed(2)}</span>
+                <span>{format(Number(order.total))}</span>
               </div>
             </>
           )}

@@ -10,11 +10,13 @@ import { ShoppingBag, ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RecentlyViewedCarousel } from "@/components/storefront/organisms/recently-viewed-carousel";
 import { RecommendationsRail } from "@/components/storefront/organisms/recommendations-rail";
+import { useCurrency } from "@/components/storefront/providers/currency-provider";
 
 export default function CartPage() {
   const cart = useCartStore((state) => state.cart);
   const isLoading = useCartStore((state) => state.isLoading);
   const fetchCart = useCartStore((state) => state.fetchCart);
+  const { format } = useCurrency();
 
   useEffect(() => {
     fetchCart();
@@ -125,7 +127,7 @@ export default function CartPage() {
         <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
           <div className="mb-2 flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Subtotal</span>
-            <span className="font-semibold">${cart.subtotal.toFixed(2)}</span>
+            <span className="font-semibold">{format(cart.subtotal, { codeOverride: cart.currency })}</span>
           </div>
           <Link href="/checkout">
             <Button size="lg" className="w-full">Checkout</Button>

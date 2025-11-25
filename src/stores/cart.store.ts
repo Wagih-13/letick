@@ -8,12 +8,13 @@ import type { Cart as StorefrontCart } from "@/types/storefront";
 interface CartState {
   // State
   cart: StorefrontCart | null;
+  buyNowCart: StorefrontCart | null;
   isDrawerOpen: boolean;
   isLoading: boolean;
   error: string | null;
 
   // Actions
-  fetchCart: () => Promise<void>;
+  fetchCart: (opts?: { mode?: "buy-now" | "normal" }) => Promise<void>;
   addItem: (
     productId: string,
     variantId?: string,
@@ -36,43 +37,27 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       // Initial state
       cart: null,
+      buyNowCart: null,
       isDrawerOpen: false,
       isLoading: false,
       error: null,
 
       // Actions
-      fetchCart: async () => {
+      fetchCart: async (opts) => {
         try {
           const prevCart = get().cart;
           set({ isLoading: true, error: null });
-          const response = await fetch("/api/storefront/cart", { cache: "no-store" });
+          const url = opts?.mode === "buy-now" ? "/api/storefront/cart?mode=buy-now" : "/api/storefront/cart";
+          const response = await fetch(url, { cache: "no-store" });
           if (!response.ok) throw new Error("Failed to fetch cart");
           const data = await response.json();
-          let serverCart = data.data;
-          if (
-            prevCart && Array.isArray(prevCart.items) && prevCart.items.length > 0 &&
-            (!serverCart || !Array.isArray(serverCart.items) || serverCart.items.length === 0)
-          ) {
-            for (const it of prevCart.items) {
-              try {
-                await fetch("/api/storefront/cart/items", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    productId: it.productId,
-                    variantId: it.variantId,
-                    quantity: Number(it.quantity || 1),
-                  }),
-                });
-              } catch {}
-            }
-            const r2 = await fetch("/api/storefront/cart", { cache: "no-store" });
-            if (r2.ok) {
-              const d2 = await r2.json();
-              serverCart = d2.data;
-            }
+          const serverCart = data.data;
+          if (opts?.mode === "buy-now") {
+            // Do not override the main cart with Buy Now temporary cart
+            set({ buyNowCart: serverCart, isLoading: false });
+          } else {
+            set({ cart: serverCart, isLoading: false });
           }
-          set({ cart: serverCart, isLoading: false });
         } catch (error) {
           set({
             error: error instanceof Error ? error.message : "Unknown error",

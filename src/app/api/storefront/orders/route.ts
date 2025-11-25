@@ -21,9 +21,10 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status") || undefined;
     const offset = (page - 1) * limit;
 
-    const where = status
-      ? (row: typeof schema.orders) => and(eq(row.userId, session.user.id as any), eq(row.status, status as any) as any)
-      : (row: typeof schema.orders) => eq(row.userId, session.user.id as any);
+    const where = (row: typeof schema.orders) =>
+      status
+        ? sql`(${row.userId} = ${session.user.id} OR ${row.customerEmail} = ${session.user.email}) AND ${row.status} = ${status}`
+        : sql`(${row.userId} = ${session.user.id} OR ${row.customerEmail} = ${session.user.email})`;
 
     const orders = await db
       .select()
@@ -135,7 +136,8 @@ export async function POST(request: NextRequest) {
       carrier: data.shippingMethod.carrier ?? undefined,
     };
 
-    const cartId = request.cookies.get("cart_id")?.value;
+    const buyNowCartId = request.cookies.get("buy_now_cart_id")?.value;
+    const cartId = buyNowCartId || request.cookies.get("cart_id")?.value;
     if (!cartId) {
       return NextResponse.json(
         { success: false, error: { message: "Cart not found" } },

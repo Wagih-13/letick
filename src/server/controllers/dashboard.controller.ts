@@ -4,7 +4,7 @@ import { db } from "@/shared/db";
 import * as schema from "@/shared/db/schema";
 import { sql, eq, and, between, gte, lte } from "drizzle-orm";
 import { handleRouteError, successResponse } from "../utils/response";
-import { requirePermission } from "../utils/rbac";
+import { requireAnyPermission } from "../utils/rbac";
 import { settingsRepository } from "@/server/repositories/settings.repository";
 
 const overviewQuery = z.object({
@@ -46,7 +46,7 @@ function getRange(
 export class DashboardController {
   static async overview(request: NextRequest) {
     try {
-      await requirePermission(request, "dashboard.view");
+      await requireAnyPermission(request as any, ["reports.view", "orders.view"]);
       const q = overviewQuery.parse(Object.fromEntries(request.nextUrl.searchParams.entries()));
       const { from, to, prevFrom, prevTo } = getRange(q);
 
@@ -113,7 +113,7 @@ export class DashboardController {
 
   static async timeseries(request: NextRequest) {
     try {
-      await requirePermission(request, "dashboard.view");
+      await requireAnyPermission(request as any, ["reports.view", "orders.view"]);
       const q = timeseriesQuery.parse(Object.fromEntries(request.nextUrl.searchParams.entries()));
       const { from, to } = getRange(q);
 
@@ -137,7 +137,7 @@ export class DashboardController {
 
   static async recentOrders(request: NextRequest) {
     try {
-      await requirePermission(request, "dashboard.view");
+      await requireAnyPermission(request as any, ["reports.view", "orders.view"]);
       const qs = Object.fromEntries(request.nextUrl.searchParams.entries());
       const limit = Math.min(Math.max(Number(qs.limit || 10), 1), 50);
 
@@ -164,7 +164,7 @@ export class DashboardController {
 
   static async ordersStatus(request: NextRequest) {
     try {
-      await requirePermission(request, "dashboard.view");
+      await requireAnyPermission(request as any, ["reports.view", "orders.view"]);
       const q = rangeQuery.parse(Object.fromEntries(request.nextUrl.searchParams.entries()));
       const { from, to } = getRange(q);
 
@@ -186,7 +186,7 @@ export class DashboardController {
 
   static async revenueByPayment(request: NextRequest) {
     try {
-      await requirePermission(request, "dashboard.view");
+      await requireAnyPermission(request as any, ["reports.view", "orders.view"]);
       const q = rangeQuery.parse(Object.fromEntries(request.nextUrl.searchParams.entries()));
       const { from, to } = getRange(q);
 
@@ -213,7 +213,7 @@ export class DashboardController {
 
   static async topProducts(request: NextRequest) {
     try {
-      await requirePermission(request, "dashboard.view");
+      await requireAnyPermission(request as any, ["reports.view", "orders.view"]);
       const q = rangeQuery.parse(Object.fromEntries(request.nextUrl.searchParams.entries()));
       const { from, to } = getRange(q);
       const limit = Math.min(Math.max(Number(q.limit || 10), 1), 50);
@@ -246,7 +246,7 @@ export class DashboardController {
 
   static async recentActivities(request: NextRequest) {
     try {
-      await requirePermission(request, "dashboard.view");
+      await requireAnyPermission(request as any, ["reports.view", "orders.view"]);
       const q = rangeQuery.parse(Object.fromEntries(request.nextUrl.searchParams.entries()));
       const { from, to } = getRange(q);
       const limit = Math.min(Math.max(Number(q.limit || 10), 1), 50);

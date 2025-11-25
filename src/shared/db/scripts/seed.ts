@@ -367,9 +367,9 @@ async function seed() {
     console.log(`   - Orders: ${orderCount}`);
     console.log(`   - Reviews: ${reviewCount}`);
     console.log("\n🔑 Login Credentials:");
-    console.log("   Super Admin: admin@nextecom.com / Admin@123");
-    console.log("   Admin: john.manager@nextecom.com / Manager@123");
-    console.log("   User: mike.johnson@gmail.com / User@123");
+    console.log("   Super Admin: admin.control.office@modestwear.com");
+    console.log("   Admin: john.manager@nextecom.com");
+    console.log("   User: mike.johnson@gmail.com");
   } catch (error) {
     console.error("❌ Seed failed:", error);
     throw error;

@@ -204,7 +204,7 @@ export default function LoginV2() {
           </div>
 
           {/* Demo Credentials */}
-          <div className="p-4 bg-muted/50 rounded-lg border">
+          {/* <div className="p-4 bg-muted/50 rounded-lg border">
             <p className="text-sm font-medium mb-2">Demo Credentials:</p>
             <div className="space-y-1 text-xs text-muted-foreground">
               <p>
@@ -214,7 +214,7 @@ export default function LoginV2() {
                 <strong>User:</strong> mike.johnson@gmail.com / User@123
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

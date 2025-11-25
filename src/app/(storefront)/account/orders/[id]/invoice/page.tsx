@@ -6,8 +6,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Printer } from "lucide-react";
+import { useCurrency } from "@/components/storefront/providers/currency-provider";
 
 export default function InvoicePage({ params }: { params: Promise<{ id: string }> }) {
+  const { format } = useCurrency();
   const [id, setId] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -129,8 +131,8 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
                 {it.sku && <div className="text-xs text-muted-foreground">SKU: {it.sku}</div>}
               </div>
               <div className="col-span-2 text-right">{it.quantity}</div>
-              <div className="col-span-1 text-right">${Number(it.price).toFixed(2)}</div>
-              <div className="col-span-2 text-right">${Number(it.total).toFixed(2)}</div>
+              <div className="col-span-1 text-right">{format(Number(it.price))}</div>
+              <div className="col-span-2 text-right">{format(Number(it.total))}</div>
             </div>
           ))}
         </div>
@@ -139,20 +141,20 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
         <div className="mt-6 flex flex-col items-end gap-1 text-sm">
           <div className="flex w-full max-w-sm justify-between">
             <span className="text-muted-foreground">Subtotal</span>
-            <span>${totals.subtotal.toFixed(2)}</span>
+            <span>{format(totals.subtotal)}</span>
           </div>
           <div className="flex w-full max-w-sm justify-between">
             <span className="text-muted-foreground">Shipping</span>
-            <span>${totals.shipping.toFixed(2)}</span>
+            <span>{format(totals.shipping)}</span>
           </div>
           <div className="flex w-full max-w-sm justify-between">
             <span className="text-muted-foreground">Tax</span>
-            <span>${totals.tax.toFixed(2)}</span>
+            <span>{format(totals.tax)}</span>
           </div>
           <Separator className="my-2 w-full max-w-sm" />
           <div className="flex w-full max-w-sm justify-between text-base font-semibold">
             <span>Total</span>
-            <span>${totals.total.toFixed(2)}</span>
+            <span>{format(totals.total)}</span>
           </div>
         </div>
 

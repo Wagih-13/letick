@@ -88,6 +88,7 @@ export interface CartItem {
   id: string;
   productId: string;
   productSlug: string;
+  variantOptions?: Record<string, string>;
   variantId?: string;
   productName: string;
   variantName?: string;

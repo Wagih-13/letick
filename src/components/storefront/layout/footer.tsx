@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export function StorefrontFooter() {
   const currentYear = new Date().getFullYear();
+  const { data: session } = useSession();
 
   return (
     <footer className="border-t bg-muted/40">
@@ -25,7 +29,7 @@ export function StorefrontFooter() {
             </p>
             <div className="flex space-x-4">
               <Link
-                href="https://facebook.com"
+                href="https://www.facebook.com/people/Modest-wear/61563898827652/?ref=pro_upsell_xav_ig_profile_page_web#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -33,17 +37,9 @@ export function StorefrontFooter() {
                 <Facebook className="h-5 w-5" />
                 <span className="sr-only">Facebook</span>
               </Link>
+            
               <Link
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
-              </Link>
-              <Link
-                href="https://instagram.com"
+                href="https://www.instagram.com/modestwear.online"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -51,15 +47,7 @@ export function StorefrontFooter() {
                 <Instagram className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
               </Link>
-              <Link
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Youtube className="h-5 w-5" />
-                <span className="sr-only">YouTube</span>
-              </Link>
+             
             </div>
           </div>
 
@@ -141,44 +129,46 @@ export function StorefrontFooter() {
             </ul>
           </div>
 
-          {/* Account */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Account</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/account"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  My Account
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/account/orders"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Order History
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/wishlist"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Wishlist
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/account/addresses"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Addresses
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Account (hidden for guests) */}
+          {session?.user && (
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Account</h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link
+                    href="/account"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    My Account
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/account/orders"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Order History
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/wishlist"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Wishlist
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/account/addresses"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Addresses
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Bottom Bar */}

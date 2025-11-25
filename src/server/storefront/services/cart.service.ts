@@ -149,12 +149,16 @@ export class StorefrontCartService {
         const product = await storefrontProductsRepository.getById(item.productId);
         let image: string | null = null;
         let productSlug = item.productSlug;
+        let variantOptions: Record<string, string> | undefined = undefined;
         if (product) {
           productSlug = product.slug || productSlug;
           // Variant image if selected
           if (item.variantId) {
             const variant = product.variants?.find((v: any) => v.id === item.variantId);
             if (variant?.image) image = variant.image;
+            if (variant?.options && typeof variant.options === "object") {
+              variantOptions = variant.options as Record<string, string>;
+            }
           }
           // Product primary image
           if (!image && product.images?.length) {
@@ -172,6 +176,7 @@ export class StorefrontCartService {
           id: item.id,
           productId: item.productId,
           productSlug: productSlug || item.product?.slug || `product-${item.productId}`,
+          variantOptions: variantOptions,
           variantId: item.variantId || undefined,
           productName: item.productName,
           variantName: item.variantName || undefined,

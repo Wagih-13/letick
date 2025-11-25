@@ -263,7 +263,7 @@ export function StorefrontHeader() {
 
     // Always refresh cart from server after resolving session (or lack thereof)
     void fetchCart();
-  }, [session?.user?.id, session?.user?.email, clearCart, clearWishlist, fetchCart]);
+  }, [session?.user?.id, session?.user?.email, (session as any)?.user?.image, clearCart, clearWishlist, fetchCart]);
 
   return (
     <>

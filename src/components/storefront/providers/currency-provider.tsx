@@ -14,7 +14,7 @@ type CurrencyContextType = {
 const CurrencyContext = createContext<CurrencyContextType | null>(null);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [currency, setCurrency] = useState<Currency>({ code: "USD" });
+  const [currency, setCurrency] = useState<Currency>({ code: "EGP" });
 
   useEffect(() => {
     let aborted = false;
@@ -35,7 +35,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 
   const format = useMemo(() => {
     return (amount: number, options?: Intl.NumberFormatOptions & { codeOverride?: string }) => {
-      const code = options?.codeOverride || currency.code || "USD";
+      const code = options?.codeOverride || currency.code || "EGP";
       const value = Number(amount || 0);
       const isInteger = Number.isInteger(value);
       try {

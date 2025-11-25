@@ -40,7 +40,7 @@ export function QuantitySelector({
 
   return (
     <div className={`flex items-center gap-2 ${className || ""}`}>
-      <span className="text-sm font-medium">Quantity:</span>
+      <span className="text-sm font-medium hidden">Quantity:</span>
       <div className="flex items-center border rounded-lg">
         <Button
           variant="ghost"

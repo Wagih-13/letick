@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useCurrency } from "@/components/storefront/providers/currency-provider";
 
 interface CartItemProps {
   item: CartItemType;
@@ -28,6 +29,7 @@ export function CartItem({ item }: CartItemProps) {
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const removeItem = useCartStore((state) => state.removeItem);
   const isLoading = useCartStore((state) => state.isLoading);
+  const { format } = useCurrency();
 
   const handleQuantityChange = (newQuantity: number) => {
     updateQuantity(item.id, newQuantity);
@@ -77,6 +79,13 @@ export function CartItem({ item }: CartItemProps) {
                     {item.variantName}
                   </p>
                 )}
+                {item.variantOptions && Object.keys(item.variantOptions).length > 0 && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {Object.entries(item.variantOptions)
+                      .map(([k, v]) => `${k}: ${v}`)
+                      .join(" • ")}
+                  </p>
+                )}
                 
                 {/* SKU */}
                 <p className="text-xs text-muted-foreground mt-1">
@@ -102,8 +111,8 @@ export function CartItem({ item }: CartItemProps) {
             </div>
 
             {/* Price and Quantity */}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center flex-wrap gap-1">
                 {/* Quantity Selector */}
                 <QuantitySelector
                   value={item.quantity}
@@ -120,18 +129,18 @@ export function CartItem({ item }: CartItemProps) {
                   disabled={isLoading}
                   className="sm:hidden text-muted-foreground"
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Remove
+                  <Trash2 className="h-4 w-4 mr-2 " />
+                 
                 </Button>
               </div>
 
               {/* Price */}
               <div className="text-right">
                 <div className="font-semibold">
-                  ${itemTotal.toFixed(2)}
+                  {format(itemTotal)}
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">
-                  ${item.unitPrice.toFixed(2)} each
+                  {format(item.unitPrice)} each
                 </div>
               </div>
             </div>

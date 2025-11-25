@@ -21,18 +21,19 @@ export default function CheckoutPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isBuyNow = (searchParams.get("mode") || "") === "buy-now";
-  const cart = useCartStore((state) => state.cart);
+  const cart = useCartStore((state) => (isBuyNow ? state.buyNowCart : state.cart));
   const fetchCart = useCartStore((state) => state.fetchCart);
   const [currentStep, setCurrentStep] = useState<CheckoutStep>("shipping");
   const [shippingAddress, setShippingAddress] = useState<any>(null);
   const [shippingMethod, setShippingMethod] = useState<any>(null);
-  const [paymentMethod, setPaymentMethod] = useState<any>(null);
+  const [paymentMethod, setPaymentMethod] = useState<any>({ type: "cash_on_delivery" });
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const { format } = useCurrency();
+  
 
   useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
+    fetchCart({ mode: isBuyNow ? "buy-now" : "normal" });
+  }, [fetchCart, isBuyNow]);
 
   // Prefill saved shipping address if logged in (also prefill email from profile)
   useEffect(() => {
@@ -64,6 +65,8 @@ export default function CheckoutPage() {
       cancelled = true;
     };
   }, []);
+
+  
 
   // Redirect if cart is empty
   useEffect(() => {
@@ -155,6 +158,10 @@ export default function CheckoutPage() {
       </div>
     );
   }
+
+  // Compute shipping and total based on selected method price only
+  const effectiveShippingAmount = shippingMethod ? (Number(shippingMethod.price) || 0) : 0;
+  const computedTotal = cart.totalAmount + (shippingMethod ? effectiveShippingAmount : 0);
 
   return (
     <div className="container py-8">
@@ -261,6 +268,7 @@ export default function CheckoutPage() {
               onBack={handleBack}
               onPlaceOrder={handlePlaceOrder}
               isPlacingOrder={isPlacingOrder}
+              effectiveShippingAmount={effectiveShippingAmount}
             />
           )}
         </div>
@@ -286,7 +294,11 @@ export default function CheckoutPage() {
                 <span className="text-muted-foreground">Shipping</span>
                 <span>
                   {shippingMethod ? (
-                    `${format(Number(shippingMethod.price), { codeOverride: cart.currency })}`
+                    effectiveShippingAmount === 0 ? (
+                      <span className="text-green-600">FREE</span>
+                    ) : (
+                      `${format(effectiveShippingAmount, { codeOverride: cart.currency })}`
+                    )
                   ) : (
                     <span className="text-xs">Calculated next</span>
                   )}
@@ -298,7 +310,7 @@ export default function CheckoutPage() {
               </div>
               <div className="border-t pt-3 flex justify-between font-semibold">
                 <span>Total</span>
-                <span>{format(cart.totalAmount, { codeOverride: cart.currency })}</span>
+                <span>{format(computedTotal, { codeOverride: cart.currency })}</span>
               </div>
             </div>
           </div>
