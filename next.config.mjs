@@ -5,10 +5,15 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "**" },
-      { protocol: "http", hostname: "**" },
-    ],
+  
+  },
+   images: {
+    domains: ['modestwear.cloud', 'www.modestwear.cloud'], // أي دومين هتجيب منه صور
+    unoptimized: true, // لو الصور محلية على السيرفر ومش عايز Next.js يعمل optimization
+    // remotePatterns: [
+    //   { protocol: "https", hostname: "**" },
+    //   { protocol: "http", hostname: "**" },
+    // ],  
   },
   async redirects() {
     return [
