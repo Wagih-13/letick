@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 // Animation and typing timings (tweak as desired)
 const REVEAL_DELAY_STEP = 0.06; // seconds between line starts
@@ -78,8 +78,6 @@ export function HeroSection() {
   const rose1Ref = useRef<HTMLImageElement | null>(null);
   const rose2Ref = useRef<HTMLImageElement | null>(null);
   const headingRef = useRef<HTMLDivElement | null>(null);
-  const measureRef = useRef<HTMLDivElement | null>(null);
-  const [reservedHeight, setReservedHeight] = useState(0);
 
   // typing text (per-line for heading)
   const headingLines = ["Find clothes that", "matches your", "style"];
@@ -164,58 +162,19 @@ export function HeroSection() {
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
-  useLayoutEffect(() => {
-    const target = headingRef.current;
-    const meas = measureRef.current;
-    if (!target || !meas) return;
-    const update = () => {
-      if (!headingRef.current || !measureRef.current) return;
-      const w = headingRef.current.clientWidth;
-      measureRef.current.style.width = `${w}px`;
-      requestAnimationFrame(() => {
-        if (!measureRef.current) return;
-        const h = measureRef.current.offsetHeight;
-        setReservedHeight(h);
-      });
-    };
-    update();
-    let ro: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== "undefined") {
-      ro = new ResizeObserver(update);
-      ro.observe(target);
-    }
-    const onWinResize = () => update();
-    window.addEventListener("resize", onWinResize);
-    return () => {
-      window.removeEventListener("resize", onWinResize);
-      if (ro) ro.disconnect();
-    };
-  }, []);
   return (
-    <section className="  lg:relative" style={{marginTop:"-20px", ["--reveal-duration" as any]: `${REVEAL_DURATION}ms`, ["--fade-dur" as any]: `${FADE_DURATION}ms` }}>
-      <div ref={sectionRef} className="container py-8 sm:py-8 lg:h-[85dvh] lg:py-0 justify-center flex items-start   " style={{margin:"0px auto"}}>
+    <section className=" sm:-mt-15 lg:-mt-10 lg:relative" style={{ ["--reveal-duration" as any]: `${REVEAL_DURATION}ms`, ["--fade-dur" as any]: `${FADE_DURATION}ms` }}>
+      <div ref={sectionRef} className="container py-10 sm:py-12 lg:h-[100dvh] lg:py-0 flex items-start">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-10">
           {/* Left column */}
           <div>
-            <div ref={headingRef} style={{ height: reservedHeight || undefined }}>
+            <div ref={headingRef}>
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl leading-[1.05] text-foreground">
                 <span className="block">{typedHeading[0]}</span>
                 <span className="block">{typedHeading[1]}</span>
                 <span className="block">{typedHeading[2]}</span>
               </h1>
               <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-xl">{typedPara}</p>
-            </div>
-            <div
-              ref={measureRef}
-              aria-hidden
-              style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", left: "-10000px", top: 0 }}
-            >
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl leading-[1.05] text-foreground">
-                <span className="block">{headingLines[0]}</span>
-                <span className="block">{headingLines[1]}</span>
-                <span className="block">{headingLines[2]}</span>
-              </h1>
-              <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-xl">{paraFull}</p>
             </div>
             <div className="mt-8">
               <Button asChild size="lg" className="h-12 px-8 text-base rounded-full">

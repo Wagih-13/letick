@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import path from "node:path";
 import fs from "node:fs/promises";
-import { processImageUpload } from "@/server/utils/image-upload";
+import { randomUUID } from "node:crypto";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,21 +10,34 @@ export const fetchCache = "force-no-store";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 
+function extFromMime(mime: string): string {
+  switch (mime) {
+    case "image/jpeg":
+      return ".jpg";
+    case "image/png":
+      return ".png";
+    case "image/webp":
+      return ".webp";
+    case "image/gif":
+      return ".gif";
+    default:
+      return "";
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const files = formData.getAll("files");
-    // Allow client to specify destination folder; default to products to preserve existing behavior
-    let folder = String(formData.get("folder") || "products").toLowerCase();
-    if (!folder || folder === "undefined" || folder === "null") folder = "products";
-    // Normalize potential aliases
-    if (folder === "profiles") folder = "avatars";
     if (!files.length) {
       return NextResponse.json({ success: false, error: { code: "NO_FILES", message: "No files uploaded" } }, { status: 400 });
     }
 
-    // Ensure base uploads dir exists (processImageUpload also ensures its own folder)
-    await fs.mkdir(path.join(process.cwd(), "public", "uploads"), { recursive: true });
+    const now = new Date();
+    const year = String(now.getFullYear());
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const baseDir = path.join(process.cwd(), "public", "uploads", "products", year, month);
+    await fs.mkdir(baseDir, { recursive: true });
 
     const saved: Array<{ url: string; path: string; filename: string; size: number; type: string }> = [];
 
@@ -45,8 +58,17 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const processed = await processImageUpload(f, folder);
-      saved.push({ url: processed.url, path: processed.path, filename: processed.filename, size: processed.size, type });
+      const origName = (f as any).name as string | undefined;
+      const ext = (origName && path.extname(origName)) || extFromMime(type) || ".bin";
+      const filename = `${randomUUID()}${ext}`;
+      const filePath = path.join(baseDir, filename);
+
+      // Write buffer to disk
+      const arrayBuffer = await f.arrayBuffer();
+      await fs.writeFile(filePath, Buffer.from(arrayBuffer));
+
+      const publicUrl = path.posix.join("/uploads", "products", year, month, filename);
+      saved.push({ url: publicUrl, path: filePath, filename, size: size ?? Buffer.byteLength(Buffer.from(arrayBuffer)), type });
     }
 
     return NextResponse.json({ success: true, data: { items: saved } });
