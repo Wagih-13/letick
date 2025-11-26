@@ -59,6 +59,7 @@ export function ProductImageGallery({ productId, onDraftChange }: { productId?: 
       setUploading(true);
       const fd = new FormData();
       files.forEach((f) => fd.append("files", f));
+      fd.append("folder", "products");
       const up = await fetch(`/api/v1/uploads`, { method: "POST", body: fd });
       const upData = await up.json();
       if (!up.ok) throw new Error(upData?.error?.message || "Upload failed");

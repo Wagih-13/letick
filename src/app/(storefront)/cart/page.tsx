@@ -68,7 +68,7 @@ export default function CartPage() {
             Looks like you haven't added anything to your cart yet. Start
             shopping to fill it up!
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex gap-4 flex-wrap justify-center">
             <Link href="/shop">
               <Button size="lg">
                 <ShoppingBag className="mr-2 h-5 w-5" />

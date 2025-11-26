@@ -135,7 +135,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       {/* Product Name and Badges */}
       <div>
         <div className="flex items-start justify-between gap-4 mb-2">
-          <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
+          <h1 className="lg:text-3xl text-xl font-bold tracking-tight">{product.name}</h1>
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -191,7 +191,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
       {/* Short Description */}
       {product.shortDescription && (
-        <p className="text-muted-foreground leading-relaxed">
+        <p className="text-muted-foreground text-m lg:text-lg leading-relaxed">
           {product.shortDescription}
         </p>
       )}

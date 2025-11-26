@@ -72,7 +72,7 @@ export default function WishlistPage() {
           <p className="text-muted-foreground mb-8">
             Save your favorite items here to buy them later
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex gap-4 flex-wrap  justify-center">
             <Link href="/shop">
               <Button size="lg">
                 <ShoppingBag className="mr-2 h-5 w-5" />

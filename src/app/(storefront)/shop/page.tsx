@@ -366,8 +366,8 @@ export default function ShopPage() {
       </Sheet>
 
       {/* Toolbar */}
-      <div className="flex items-center justify-between mb-3 mt-4">
-        <div className="flex items-center gap-4">
+      <div className="flex items-start justify-between mb-3 mt-4 mb-4">
+        <div className="flex items-center flex-wrap gap-4">
           {/* Mobile Filter Button */}
           <Button
             variant="outline"
@@ -384,7 +384,7 @@ export default function ShopPage() {
 
           {/* Results count */}
           {data && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground  ">
               Showing {data.items.length} of {data.total} products
             </p>
           )}
@@ -404,7 +404,7 @@ export default function ShopPage() {
         </div>
 
         {/* Sort + Density */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center  gap-2">
           <span className="text-sm text-muted-foreground hidden sm:inline">
             Sort by:
           </span>
