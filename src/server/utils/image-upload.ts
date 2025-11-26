@@ -20,22 +20,12 @@ function uniqueFilename(): string {
 
 function getDestDir(folder: string) {
   const now = new Date();
-  const uploadsRoot =
-    process.env.UPLOADS_ROOT ||
-    (process.env.NODE_ENV === "production"
-      ? "/home/wagih/uploads/modeswear"
-      : path.join(process.cwd(), "public", "uploads"));
   // Preserve existing structure: products go under /year/month
   if (folder === "products") {
     const year = String(now.getFullYear());
     const month = String(now.getMonth() + 1).padStart(2, "0");
-    const baseDir = path.join(uploadsRoot, folder, year, month);
+    const baseDir = path.join(process.cwd(), "public", "uploads", folder, year, month);
     const publicBase = path.posix.join("/uploads", folder, year, month);
-    return { baseDir, publicBase };
-  }
-  if (folder === "categories") {
-    const baseDir = path.join(uploadsRoot, folder);
-    const publicBase = path.posix.join("/uploads", folder);
     return { baseDir, publicBase };
   }
   // Other folders stay flat under /uploads/<folder>
