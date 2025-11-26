@@ -276,6 +276,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
                     type="button"
                     className={`w-full px-4 py-3 flex items-center gap-3 text-left text-sm ${isActive ? "bg-accent" : ""}`}
                     onMouseEnter={() => setActiveIndex(idx)}
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => select(it)}
                     role="option"
                     aria-selected={isActive}
@@ -284,7 +285,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
                     <div className="flex-1">
                       <div className="font-medium line-clamp-1">{highlight(p.name, debouncedQuery)}</div>
                       <div className="text-xs text-muted-foreground">
-                        ${'{'}typeof p.price === "number" ? p.price.toFixed(2) : String(p.price){'}'}
+                        {typeof p.price === "number" ? `$${p.price.toFixed(2)}` : String(p.price)}
                       </div>
                     </div>
                   </button>
@@ -298,6 +299,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
                     type="button"
                     className={`w-full px-4 py-3 flex items-center gap-3 text-left text-sm ${isActive ? "bg-accent" : ""}`}
                     onMouseEnter={() => setActiveIndex(idx)}
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => select(it)}
                     role="option"
                     aria-selected={isActive}
@@ -318,6 +320,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
                     type="button"
                     className={`w-full px-4 py-3 flex items-center gap-3 text-left text-sm ${isActive ? "bg-accent" : ""}`}
                     onMouseEnter={() => setActiveIndex(idx)}
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => select(it)}
                     role="option"
                     aria-selected={isActive}
@@ -335,6 +338,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
                   type="button"
                   className={`w-full px-4 py-3 text-left text-sm font-medium ${isActive ? "bg-accent" : ""}`}
                   onMouseEnter={() => setActiveIndex(idx)}
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={() => select(it)}
                   role="option"
                   aria-selected={isActive}

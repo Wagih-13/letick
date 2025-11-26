@@ -42,7 +42,6 @@ export async function TrendingProducts() {
           <Link href="/shop?sortBy=popular">View All</Link>
         </Button>
       </div>
-
       <ProductGrid products={products} columns={4} />
     </section>
   );

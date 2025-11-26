@@ -68,7 +68,13 @@ export class ProductMediaController {
       // Best-effort: if url is under public/uploads, delete file
       const url = result.data.url;
       if (url && url.startsWith("/uploads/")) {
-        const abs = path.join(process.cwd(), "public", url.replace(/^\/+/, ""));
+        const uploadsRoot =
+          process.env.UPLOADS_ROOT ||
+          (process.env.NODE_ENV === "production"
+            ? "/home/wagih/uploads/modeswear"
+            : path.join(process.cwd(), "public", "uploads"));
+        const rel = url.replace(/^\/?uploads\/?/, "");
+        const abs = path.join(uploadsRoot, rel);
         try {
           await fs.unlink(abs);
         } catch {}
