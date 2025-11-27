@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Ensure base uploads dir exists (processImageUpload also ensures its own folder)
-    await fs.mkdir(path.join(process.cwd(), "public", "uploads"), { recursive: true });
+    await fs.mkdir(path.join(process.cwd(), "public", "upload"), { recursive: true });
 
     const saved: Array<{ url: string; path: string; filename: string; size: number; type: string }> = [];
 
