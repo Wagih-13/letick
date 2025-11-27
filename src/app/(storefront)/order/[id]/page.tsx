@@ -232,10 +232,12 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
               View Order History
             </Button>
           </Link>
-          <Button variant="outline" size="lg" className="flex-1">
-            <Download className="mr-2 h-5 w-5" />
-            Download Invoice
-          </Button>
+          <Link href={`/account/orders/${orderId}/invoice`} target="_blank" className="flex-1">
+            <Button variant="outline" size="lg" className="w-full">
+              <Download className="mr-2 h-5 w-5" />
+              Download Invoice
+            </Button>
+          </Link>
           <Link href="/" className="flex-1">
             <Button size="lg" className="w-full">
               Continue Shopping

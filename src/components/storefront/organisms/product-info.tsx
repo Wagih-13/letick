@@ -252,7 +252,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
         <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
           <div className="mb-2 flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Price</span>
-            <span className="font-semibold">${Number(currentPrice).toFixed(2)}</span>
+            <span className="font-semibold">EGY {Number(currentPrice).toFixed(2)}</span>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <Button
