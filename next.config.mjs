@@ -24,6 +24,10 @@ const nextConfig = {
     ],
   },
 
+  generateBuildId: async () => {
+    return 'build-' + Date.now();
+  },
+
   async headers() {
     return [
       {
