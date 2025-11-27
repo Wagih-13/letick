@@ -3,7 +3,7 @@
 const nextConfig = {
   // Image optimization configuration
   images: {
-    unoptimized: false, // Disable Next.js image optimization - serve as-is
+    unoptimized: true, // Disable Next.js image optimization - serve as-is
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
@@ -13,7 +13,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'www.modestwear.cloud', // Replace with your domain
+        hostname: 'yourdomain.com',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.yourdomain.com',
         pathname: '/uploads/**',
       },
     ],
