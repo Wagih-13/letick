@@ -4,7 +4,7 @@ const nextConfig = {
   // Image optimization configuration
   images: {
     unoptimized: true, // Disable Next.js image optimization - serve as-is
-    formats: ['image/avif', 'image/webp', 'image/jpeg', 'image/png'],
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'http',
