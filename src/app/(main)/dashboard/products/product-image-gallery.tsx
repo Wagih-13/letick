@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Trash2, Star, StarOff, Upload } from "lucide-react";
+import { Trash2, Star, StarOff, Upload, Loader2 } from "lucide-react";
 
 type ImageItem = {
   id: string;
@@ -189,7 +189,15 @@ export function ProductImageGallery({ productId, onDraftChange }: { productId?: 
               const input = (e.currentTarget.previousSibling as HTMLInputElement) || null;
               if (input) input.click();
             }}>
-              <Upload className="mr-1 h-4 w-4" /> Upload
+              {uploading ? (
+                <>
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-1 h-4 w-4" /> Upload
+                </>
+              )}
             </Button>
           </label>
           {/* Reorder save removed */}
@@ -200,7 +208,6 @@ export function ProductImageGallery({ productId, onDraftChange }: { productId?: 
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
           e.preventDefault();
-          if (!productId) return;
           const files = Array.from(e.dataTransfer.files || []);
           if (files.length) void onFilesSelected(files);
         }}
@@ -218,7 +225,7 @@ export function ProductImageGallery({ productId, onDraftChange }: { productId?: 
             <div key={img.id} className="rounded-md border p-2">
               <div className="relative aspect-square overflow-hidden rounded">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.url} alt={img.altText || ""} className="h-full w-full object-cover" />
+                <img src={img.url} alt={img.altText || ""} className="h-full w-full object-cover" loading="lazy" decoding="async" />
                 {img.isPrimary ? (
                   <div className="absolute left-1 top-1 rounded bg-primary px-1.5 py-0.5 text-xs text-primary-foreground">Primary</div>
                 ) : null}

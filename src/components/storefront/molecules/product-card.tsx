@@ -16,6 +16,11 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/components/storefront/providers/currency-provider";
 
+function truncateWords(text: string, limit: number) {
+  const words = (text || "").trim().split(/\s+/);
+  return words.length > limit ? words.slice(0, limit).join(" ") + "…" : text;
+}
+
 interface ProductCardProps {
   product: ProductCardType;
   className?: string;
@@ -192,7 +197,7 @@ export function ProductCard({ product, className, onQuickView }: ProductCardProp
       <div className="p-3 sm:p-4">
         {/* Product Name */}
         <h3 className="mb-2 line-clamp-2 text-sm font-semibold leading-tight group-hover:text-primary transition-colors">
-          {product.name}
+          {truncateWords(product.name, 5)}
         </h3>
 
         {/* Rating badge */}

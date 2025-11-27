@@ -286,7 +286,7 @@ export function StorefrontHeader() {
               src="/Storefront/images/logo%20(1).png"
               alt="Modest Wear"
               className="h-6 w-auto sm:h-7"
-              loading="eager"
+              loading="lazy"
               decoding="async"
             />
           </Link>

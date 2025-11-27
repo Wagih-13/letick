@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, RefreshCcw, Upload, Trash2, Layers, CheckCircle2, PauseCircle, FolderTree, GitBranch, Image as ImageIcon } from "lucide-react";
+import { Plus, RefreshCcw, Upload, Trash2, Layers, CheckCircle2, PauseCircle, FolderTree, GitBranch, Image as ImageIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -352,7 +352,15 @@ export default function CategoriesPage() {
                         const input = (e.currentTarget.previousSibling as HTMLInputElement) || null;
                         if (input) input.click();
                       }}>
-                        <Upload className="mr-1 h-4 w-4" /> Upload
+                        {uploading ? (
+                          <>
+                            <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="mr-1 h-4 w-4" /> Upload
+                          </>
+                        )}
                       </Button>
                     </label>
                     {form.image ? (
@@ -376,7 +384,7 @@ export default function CategoriesPage() {
                     <div className="rounded-md border p-2">
                       <div className="relative aspect-[16/9] overflow-hidden rounded">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={form.image} alt="Category" className="h-full w-full object-cover" />
+                        <img src={form.image} alt="Category" className="h-full w-full object-cover" loading="lazy" decoding="async" />
                       </div>
                     </div>
                   ) : null}

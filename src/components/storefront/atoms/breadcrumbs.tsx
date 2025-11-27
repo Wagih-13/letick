@@ -13,6 +13,11 @@ interface BreadcrumbsProps {
 }
 
 export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
+  function truncateWords(text: string, limit: number) {
+    const words = (text || "").trim().split(/\s+/);
+    return words.length > limit ? words.slice(0, limit).join(" ") + "…" : text;
+  }
+
   return (
     <nav
       aria-label="Breadcrumb"
@@ -28,7 +33,8 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
             )}
             {isLast ? (
               <span className="font-medium text-foreground" aria-current="page">
-                {item.label}
+                <span className="sm:hidden">{truncateWords(item.label, 3)}</span>
+                <span className="hidden sm:inline">{item.label}</span>
               </span>
             ) : (
               <Link

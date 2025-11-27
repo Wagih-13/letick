@@ -193,7 +193,7 @@ export function HeroSection() {
   }, []);
   return (
     <section className="  lg:relative" style={{marginTop:"-20px", ["--reveal-duration" as any]: `${REVEAL_DURATION}ms`, ["--fade-dur" as any]: `${FADE_DURATION}ms` }}>
-      <div ref={sectionRef} className="container py-8 sm:py-8 lg:h-[85dvh] lg:py-0 justify-center flex items-start   " style={{margin:"0px auto"}}>
+      <div ref={sectionRef} className="container py-8 sm:py-8 lg:h-[90dvh] lg:py-0 justify-center flex items-start   " style={{margin:"0px auto"}}>
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-10">
           {/* Left column */}
           <div>
@@ -245,6 +245,7 @@ export function HeroSection() {
                 alt="Featured"
                 className="w-full h-auto object-contain animate-fade-in will-change-transform"
                 loading="eager"
+                decoding="async"
                 ref={dressRef}
               />
               <img
@@ -252,6 +253,8 @@ export function HeroSection() {
                 alt=""
                 aria-hidden
                 className="hidden lg:block pointer-events-none select-none absolute w-20 sm:w-24 opacity-90 -rotate-12 animate-float-slow will-change-transform"
+                loading="lazy"
+                decoding="async"
                 ref={rose1Ref}
                 style={{ top: "14%", right: "8%" }}
               />
@@ -260,6 +263,8 @@ export function HeroSection() {
                 alt=""
                 aria-hidden
                 className="hidden lg:block pointer-events-none select-none absolute w-14 sm:w-16 opacity-90 rotate-6 animate-float-slower will-change-transform"
+                loading="lazy"
+                decoding="async"
                 ref={rose2Ref}
                 style={{ bottom: "40%", left: "7%" }}
               />

@@ -29,11 +29,18 @@ export function VariantSelector({
     );
   };
 
-  // Get available variants for a specific option value
+  // Get available variants for a specific option value considering current selections
   const getAvailableVariants = (optionType: string, value: string) => {
-    return variants.filter(
-      (v) => v.options[optionType] === value && v.isActive && v.stockQuantity > 0
-    );
+    return variants.filter((v) => {
+      if (!v?.isActive || (v?.stockQuantity ?? 0) <= 0) return false;
+      if (v.options[optionType] !== value) return false;
+      const selections = selectedVariant?.options || {};
+      for (const [k, val] of Object.entries(selections)) {
+        if (!val || k === optionType) continue;
+        if (v.options[k] !== val) return false;
+      }
+      return true;
+    });
   };
 
   // Get current selections from selected variant
@@ -52,7 +59,14 @@ export function VariantSelector({
 
     if (matchingVariant) {
       onVariantChange(matchingVariant.id);
+      return;
     }
+
+    // Fallback: pick any active, in-stock variant that matches the selected option value
+    const fallback = variants.find(
+      (v) => v.isActive && (v.stockQuantity ?? 0) > 0 && v.options[optionType] === value
+    );
+    if (fallback) onVariantChange(fallback.id);
   };
 
   return (
@@ -75,6 +89,7 @@ export function VariantSelector({
                 const isSelected = currentSelections[optionType] === value;
                 const availableVariants = getAvailableVariants(optionType, value);
                 const isAvailable = availableVariants.length > 0;
+                const isSizeType = optionType.toLowerCase().includes("size");
 
                 return (
                   <Button
@@ -85,8 +100,9 @@ export function VariantSelector({
                     disabled={!isAvailable}
                     className={cn(
                       "min-w-[60px]",
-                      !isAvailable && "opacity-50 cursor-not-allowed"
+                      !isAvailable && (isSizeType ? "opacity-50 line-through cursor-not-allowed" : "opacity-50 cursor-not-allowed")
                     )}
+                    aria-disabled={!isAvailable}
                   >
                     {value}
                   </Button>

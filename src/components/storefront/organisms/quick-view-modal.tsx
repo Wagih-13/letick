@@ -104,8 +104,9 @@ export function QuickViewModal({
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="sm:max-w-4xl sm:max-h-[90vh] sm:overflow-y-auto w-[100vw] sm:w-auto h-[100dvh] sm:h-auto rounded-none sm:rounded-lg p-0 sm:p-6"
-      >
+        className="sm:max-w-4xl sm:max-h-[90vh] overflow-y-auto w-[100vw] sm:w-auto h-[80dvh] sm:h-auto rounded-none sm:rounded-lg p-0 sm:p-6"
+  
+    >
         <DialogTitle className="sr-only">
           {product?.name || "Product Quick View"}
         </DialogTitle>
@@ -131,7 +132,7 @@ export function QuickViewModal({
             </div>
           </div>
         ) : product ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 px-4 sm:px-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 px-4 sm:px-0"  >
             {/* Images */}
             <div className="space-y-4">
               <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">

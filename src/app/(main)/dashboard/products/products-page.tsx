@@ -38,6 +38,7 @@ export default function ProductsPage() {
   const [variantsOpen, setVariantsOpen] = useState(false);
   const [editing, setEditing] = useState<ProductRow | null>(null);
   const [draftImages, setDraftImages] = useState<Array<{ id: string; url: string; altText?: string | null; isPrimary?: boolean }>>([]);
+  const [draftVariants, setDraftVariants] = useState<any[]>([]);
   const [form, setForm] = useState({
     name: "",
     slug: "",
@@ -190,6 +191,7 @@ export default function ProductsPage() {
     setEditing(null);
     setForm({ name: "", slug: "", sku: "", price: "0.00", compareAtPrice: "", status: "draft", stockStatus: "in_stock", trackInventory: true, isFeatured: false, allowReviews: true, description: "", shortDescription: "", stockQuantity: 0, categoryId: "none" });
     setDraftImages([]);
+    setDraftVariants([]);
   }
 
   async function onSubmit() {
@@ -230,6 +232,28 @@ export default function ProductsPage() {
           // best-effort: don't block modal close on failure
           if (!addRes.ok) {
             // ignore error details here per request to avoid chatter
+          }
+        } catch {}
+      }
+      if (creating && newId && draftVariants.length) {
+        try {
+          for (const v of draftVariants) {
+            const payload: any = {
+              sku: (v as any).sku || "",
+              name: (v as any).name || null,
+              price: String((v as any).price ?? "0.00"),
+              compareAtPrice: (v as any).compareAtPrice || null,
+              stockQuantity: Number.isFinite((v as any).stockQuantity) ? Number((v as any).stockQuantity) : 0,
+              options: (v as any).options || undefined,
+              image: (v as any).image || null,
+              isActive: Boolean((v as any).isActive),
+              sortOrder: Number.isFinite((v as any).sortOrder) ? Number((v as any).sortOrder) : 0,
+            };
+            await fetch(`/api/v1/products/${newId}/variants`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
           }
         } catch {}
       }
@@ -478,7 +502,7 @@ export default function ProductsPage() {
                   <ProductImageGallery productId={editing?.id} onDraftChange={setDraftImages} />
                 </div>
                 <div className="mt-4">
-                  <Button variant="secondary" onClick={() => setVariantsOpen(true)} disabled={!editing}>
+                  <Button variant="secondary" onClick={() => setVariantsOpen(true)}>
                     Manage Variants
                   </Button>
                 </div>
@@ -488,7 +512,7 @@ export default function ProductsPage() {
                 <Button onClick={() => void onSubmit()} disabled={loading}>{editing ? "Update" : "Create"}</Button>
               </DialogFooter>
               {/* Variants Manager Modal */}
-              <ProductVariantsManager productId={editing?.id || ""} open={variantsOpen} onOpenChange={setVariantsOpen} />
+              <ProductVariantsManager productId={editing?.id || ""} open={variantsOpen} onOpenChange={setVariantsOpen} draftMode={!editing} draftItems={draftVariants} onDraftChange={setDraftVariants} />
             </DialogContent>
           </Dialog>
         </div>

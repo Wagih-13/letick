@@ -20,16 +20,21 @@ function uniqueFilename(): string {
 
 function getDestDir(folder: string) {
   const now = new Date();
+  
+  // المسار الخارجي - خارج المشروع
+  const externalBasePath = "/home/wagih/uploads/modeswear";
+  
   // Preserve existing structure: products go under /year/month
   if (folder === "products") {
     const year = String(now.getFullYear());
     const month = String(now.getMonth() + 1).padStart(2, "0");
-    const baseDir = path.join(process.cwd(), "public", "uploads", folder, year, month);
+    const baseDir = path.join(externalBasePath, folder, year, month);
     const publicBase = path.posix.join("/uploads", folder, year, month);
     return { baseDir, publicBase };
   }
+  
   // Other folders stay flat under /uploads/<folder>
-  const baseDir = path.join(process.cwd(), "public", "uploads", folder);
+  const baseDir = path.join(externalBasePath, folder);
   const publicBase = path.posix.join("/uploads", folder);
   return { baseDir, publicBase };
 }
@@ -53,5 +58,10 @@ export async function processImageUpload(file: File, folder: string, quality: nu
   await fs.writeFile(destPath, webpBuffer);
 
   const url = path.posix.join(publicBase, filename);
+  
+  console.log('✅ Image uploaded');
+  console.log('URL:', url);
+  console.log('Path:', destPath);
+  
   return { url, path: destPath, filename, size: webpBuffer.byteLength };
 }

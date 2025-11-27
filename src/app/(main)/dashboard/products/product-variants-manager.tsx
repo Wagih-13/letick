@@ -26,7 +26,7 @@ type VariantRow = {
   sortOrder?: number;
 };
 
-export function ProductVariantsManager({ productId, open, onOpenChange }: { productId: string; open: boolean; onOpenChange: (open: boolean) => void }) {
+export function ProductVariantsManager({ productId, open, onOpenChange, draftMode, draftItems, onDraftChange }: { productId?: string; open: boolean; onOpenChange: (open: boolean) => void; draftMode?: boolean; draftItems?: VariantRow[]; onDraftChange?: (items: VariantRow[]) => void }) {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<VariantRow[]>([]);
   const [editing, setEditing] = useState<VariantRow | null>(null);
@@ -133,16 +133,40 @@ export function ProductVariantsManager({ productId, open, onOpenChange }: { prod
         sortOrder: Number.isFinite(form.sortOrder) ? Number(form.sortOrder) : 0,
       };
       const editingId = editing?.id;
-      const res = await fetch(editingId ? `/api/v1/products/${productId}/variants/${editingId}` : `/api/v1/products/${productId}/variants`, {
-        method: editingId ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error?.message || "Save failed");
-      toast.success(editingId ? "Variant updated" : "Variant created");
-      resetForm();
-      void fetchVariants();
+      if (productId) {
+        const res = await fetch(editingId ? `/api/v1/products/${productId}/variants/${editingId}` : `/api/v1/products/${productId}/variants`, {
+          method: editingId ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error?.message || "Save failed");
+        toast.success(editingId ? "Variant updated" : "Variant created");
+        resetForm();
+        void fetchVariants();
+      } else if (draftMode) {
+        const newItem: VariantRow = {
+          id: editing?.id || ((globalThis as any).crypto?.randomUUID?.() || Math.random().toString(36).slice(2)),
+          productId: "draft" as any,
+          sku: payload.sku,
+          name: payload.name,
+          price: String(payload.price),
+          compareAtPrice: payload.compareAtPrice,
+          stockQuantity: payload.stockQuantity,
+          lowStockThreshold: undefined,
+          options: (payload.options as any) || null,
+          image: payload.image,
+          isActive: payload.isActive,
+          sortOrder: payload.sortOrder,
+        };
+        setItems((prev) => {
+          const next = editing?.id ? prev.map((it) => (it.id === editing?.id ? { ...newItem } : it)) : [...prev, newItem];
+          onDraftChange?.(next);
+          return next;
+        });
+        toast.success(editingId ? "Variant updated" : "Variant added");
+        resetForm();
+      }
     } catch (e: any) {
       toast.error(e?.message || "Save failed");
     }
@@ -152,20 +176,34 @@ export function ProductVariantsManager({ productId, open, onOpenChange }: { prod
     try {
       const yes = confirm("Delete variant?");
       if (!yes) return;
-      const res = await fetch(`/api/v1/products/${productId}/variants/${variantId}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error?.message || "Delete failed");
-      toast.success("Variant deleted");
-      void fetchVariants();
+      if (productId) {
+        const res = await fetch(`/api/v1/products/${productId}/variants/${variantId}`, { method: "DELETE" });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error?.message || "Delete failed");
+        toast.success("Variant deleted");
+        void fetchVariants();
+      } else if (draftMode) {
+        setItems((prev) => {
+          const next = prev.filter((it) => it.id !== variantId);
+          onDraftChange?.(next);
+          return next;
+        });
+        toast.success("Variant removed");
+      }
     } catch (e: any) {
       toast.error(e?.message || "Delete failed");
     }
   }
 
   useEffect(() => {
-    if (open && productId) void fetchVariants();
+    if (!open) return;
+    if (productId) {
+      void fetchVariants();
+    } else if (draftMode) {
+      setItems(Array.isArray(draftItems) ? draftItems : []);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, productId]);
+  }, [open, productId, draftMode, draftItems]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
