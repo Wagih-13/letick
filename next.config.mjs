@@ -9,53 +9,26 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-        pathname: '/upload/**',
+        pathname: '/uploads/**',
       },
       {
         protocol: 'https',
         hostname: 'www.modestwear.cloud', // Replace with your domain
-        pathname: '/upload/**',
+        pathname: '/uploads/**',
       },
     ],
   },
 
-  // Rewrite rules - bypass Next.js build, let Nginx handle it
-  async rewrites() {
-    return {
-      beforeFiles: [
-        // Don't rewrite, let Nginx handle these directly
-        {
-          source: '/upload/:path*',
-          destination: '/upload/:path*',
-        },
-      ],
-    };
-  },
-
-  // Cache headers for production
-  async headers() {
-    return [
-      // All uploads - let Nginx serve directly
-      {
-        source: '/upload/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-          {
-            key: 'Access-Control-Allow-Origin',
-            value: '*',
-          },
-        ],
-      },
-    ];
-  },
-
   // Environment variables
   env: {
-    NEXT_PUBLIC_PRODUCT_IMAGE_PATH: '/upload/products',
-    NEXT_PUBLIC_CATEGORY_IMAGE_PATH: '/upload/categories',
+    NEXT_PUBLIC_UPLOADS_PATH: '/uploads',
+  },
+
+  // Don't include uploads folder in build
+  // Images are served by Nginx at runtime, not bundled
+  onDemandEntries: {
+    maxInactiveAge: 60 * 1000,
+    pagesBufferLength: 5,
   },
 };
 

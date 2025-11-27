@@ -65,30 +65,13 @@ export class ProductMediaController {
       await requirePermission(request, "products.manage");
       const result = await productsService.removeImage(productId, imageId);
       if (!result.success) return NextResponse.json({ success: false, error: result.error }, { status: 404 });
-      // Best-effort: delete stored file if it lives under our managed upload roots
+      // Best-effort: if url is under public/uploads, delete file
       const url = result.data.url;
-      if (typeof url === "string") {
-        const tryPaths: string[] = [];
-        // New scheme rooted at /upload/*
-        if (url.startsWith("/upload/")) {
-          const rel = url.replace(/^\/+upload\/+/, "");
-          const baseRoot =
-            process.env.UPLOAD_DIR ||
-            (process.env.NODE_ENV === "production"
-              ? "/home/wagih/uploads/modeswear"
-              : path.join(process.cwd(), "public", "upload"));
-          tryPaths.push(path.join(baseRoot, rel));
-        }
-        // Legacy scheme rooted at /uploads/* inside Next public folder
-        if (url.startsWith("/uploads/")) {
-          tryPaths.push(path.join(process.cwd(), "public", url.replace(/^\/+/, "")));
-        }
-        for (const p of tryPaths) {
-          try {
-            await fs.unlink(p);
-            break;
-          } catch {}
-        }
+      if (url && url.startsWith("/uploads/")) {
+        const abs = path.join(process.cwd(), "public", url.replace(/^\/+/, ""));
+        try {
+          await fs.unlink(abs);
+        } catch {}
       }
       return successResponse(result.data);
     } catch (e) {

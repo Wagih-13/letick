@@ -20,30 +20,17 @@ function uniqueFilename(): string {
 
 function getDestDir(folder: string) {
   const now = new Date();
-  const baseRoot =
-    process.env.UPLOAD_DIR ||
-    (process.env.NODE_ENV === "production"
-      ? "/home/wagih/uploads/modeswear"
-      : path.join(process.cwd(), "public", "upload"));
-
+  // Preserve existing structure: products go under /year/month
   if (folder === "products") {
     const year = String(now.getFullYear());
     const month = String(now.getMonth() + 1).padStart(2, "0");
-    const baseDir = path.join(baseRoot, "products", year, month);
-    const productPublicRoot = process.env.NEXT_PUBLIC_PRODUCT_IMAGE_PATH || "/upload/products";
-    const publicBase = path.posix.join(productPublicRoot, year, month);
+    const baseDir = path.join(process.cwd(), "public", "uploads", folder, year, month);
+    const publicBase = path.posix.join("/uploads", folder, year, month);
     return { baseDir, publicBase };
   }
-
-  if (folder === "categories") {
-    const baseDir = path.join(baseRoot, "categories");
-    const categoryPublicRoot = process.env.NEXT_PUBLIC_CATEGORY_IMAGE_PATH || "/upload/categories";
-    const publicBase = path.posix.join(categoryPublicRoot);
-    return { baseDir, publicBase };
-  }
-
-  const baseDir = path.join(baseRoot, folder);
-  const publicBase = path.posix.join("/upload", folder);
+  // Other folders stay flat under /uploads/<folder>
+  const baseDir = path.join(process.cwd(), "public", "uploads", folder);
+  const publicBase = path.posix.join("/uploads", folder);
   return { baseDir, publicBase };
 }
 
