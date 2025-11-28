@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Image from "next/image";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -384,7 +385,7 @@ export default function CategoriesPage() {
                     <div className="rounded-md border p-2">
                       <div className="relative aspect-[16/9] overflow-hidden rounded">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={form.image} alt="Category" className="h-full w-full object-cover" loading="lazy" decoding="async" />
+                        <Image src={form.image} alt="Category" fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
                       </div>
                     </div>
                   ) : null}

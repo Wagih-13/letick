@@ -2,14 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import type { ProductImage } from "@/types/storefront";
 
 interface ProductGalleryProps {
@@ -18,126 +13,138 @@ interface ProductGalleryProps {
 }
 
 export function ProductGallery({ images, productName }: ProductGalleryProps) {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [isZoomOpen, setIsZoomOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const selectedImage = images[selectedIndex] || images[0];
-
-  const handlePrevious = () => {
-    setSelectedIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
-  };
-
-  const handleNext = () => {
-    setSelectedIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
-  };
-
+  // Fallback if no images
   if (!images || images.length === 0) {
     return (
-      <div className="w-full h-[340px] sm:h-[380px] lg:h-[420px] bg-muted rounded-lg flex items-center justify-center">
-        <span className="text-muted-foreground">No image available</span>
+      <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
+        <p className="text-muted-foreground">No images available</p>
       </div>
     );
   }
 
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const goToIndex = (index: number) => {
+    setCurrentIndex(index);
+  };
+
   return (
     <div className="space-y-4">
-      {/* Main Image */}
-      <div className="relative w-full aspect-[4/5]  bg-muted rounded-lg overflow-hidden group">
+      {/* Main Image Slider */}
+      <div className="relative aspect-[4/5] bg-muted rounded-lg overflow-hidden group">
+        {/* Current Image */}
         <Image
-          src={selectedImage.url}
-          alt={selectedImage.altText || productName}
+          src={images[currentIndex].url}
+          alt={images[currentIndex].altText || `${productName} - Image ${currentIndex + 1}`}
           fill
-          className="object-contain"
-          priority
-          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          priority={currentIndex === 0}
         />
 
-        {/* Zoom Button */}
-        <Button
-          variant="secondary"
-          size="icon"
-          className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={() => setIsZoomOpen(true)}
-        >
-          <ZoomIn className="h-4 w-4" />
-          <span className="sr-only">Zoom image</span>
-        </Button>
-
-        {/* Navigation Arrows */}
+        {/* Navigation Arrows - Only show if more than 1 image */}
         {images.length > 1 && (
           <>
             <Button
-              variant="secondary"
+              variant="outline"
               size="icon"
-              className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={handlePrevious}
+              className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm"
+              onClick={goToPrevious}
+              aria-label="Previous image"
             >
               <ChevronLeft className="h-4 w-4" />
-              <span className="sr-only">Previous image</span>
             </Button>
             <Button
-              variant="secondary"
+              variant="outline"
               size="icon"
-              className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={handleNext}
+              className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm"
+              onClick={goToNext}
+              aria-label="Next image"
             >
               <ChevronRight className="h-4 w-4" />
-              <span className="sr-only">Next image</span>
             </Button>
           </>
         )}
 
         {/* Image Counter */}
         {images.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-            {selectedIndex + 1} / {images.length}
+          <div className="absolute bottom-4 right-4 px-3 py-1 bg-background/80 backdrop-blur-sm rounded-full text-sm">
+            {currentIndex + 1} / {images.length}
           </div>
         )}
       </div>
 
-      {/* Thumbnails */}
+      {/* Thumbnail Slider - Only show if more than 1 image */}
       {images.length > 1 && (
-        <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-          {images.map((image, index) => (
-            <button
-              key={image.id}
-              onClick={() => setSelectedIndex(index)}
-              className={cn(
-                "relative aspect-[4/5] rounded-lg overflow-hidden border-2 transition-all hover:scale-105",
-                selectedIndex === index
-                  ? "border-primary ring-2 ring-primary/20"
-                  : "border-transparent hover:border-muted-foreground/20"
-              )}
-            >
-              <Image
-                src={image.url}
-                alt={image.altText || `${productName} - Image ${index + 1}`}
-                fill
-                className="object-contain"
-                sizes="(max-width: 640px) 25vw, (max-width: 1024px) 16vw, 8vw"
-              />
-            </button>
-          ))}
+        <div className="relative">
+          {/* Thumbnails Container */}
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+            {images.map((image, index) => (
+              <button
+                key={image.id}
+                onClick={() => goToIndex(index)}
+                className={cn(
+                  "relative flex-shrink-0 aspect-[4/5] w-20 rounded-md overflow-hidden border-1 transition-all",
+                  currentIndex === index
+                    ? "border-primary ring-1 ring-primary ring-offset-1"
+                    : "border-transparent hover:border-muted-foreground/50"
+                )}
+                aria-label={`View image ${index + 1}`}
+              >
+                <Image
+                  src={image.url}
+                  alt={image.altText || `${productName} thumbnail ${index + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="80px"
+                />
+              </button>
+            ))}
+          </div>
+
+          {/* Thumbnail Navigation Arrows (for mobile) */}
+          {images.length > 4 && (
+            <>
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-8 opacity-0 hover:opacity-100 transition-opacity bg-background/90 backdrop-blur-sm md:hidden"
+                onClick={() => {
+                  const container = document.querySelector('.overflow-x-auto');
+                  if (container) {
+                    container.scrollBy({ left: -160, behavior: 'smooth' });
+                  }
+                }}
+                aria-label="Scroll thumbnails left"
+              >
+                <ChevronLeft className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8 opacity-0 hover:opacity-100 transition-opacity bg-background/90 backdrop-blur-sm md:hidden"
+                onClick={() => {
+                  const container = document.querySelector('.overflow-x-auto');
+                  if (container) {
+                    container.scrollBy({ left: 160, behavior: 'smooth' });
+                  }
+                }}
+                aria-label="Scroll thumbnails right"
+              >
+                <ChevronRight className="h-3 w-3" />
+              </Button>
+            </>
+          )}
         </div>
       )}
-
-      {/* Zoom Dialog */}
-      <Dialog open={isZoomOpen} onOpenChange={setIsZoomOpen}>
-        <DialogContent className="max-w-7xl w-full h-[90vh]">
-          <DialogTitle className="sr-only">
-            {selectedImage.altText || productName}
-          </DialogTitle>
-          <div className="relative w-full h-full">
-            <Image
-              src={selectedImage.url}
-              alt={selectedImage.altText || productName}
-              fill
-              className="object-contain"
-              sizes="90vw"
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

@@ -25,7 +25,10 @@ export function RecommendationsRail({ title = "You may also like", context, prod
         if (context === "product" && productId) {
           qs.set("productId", productId);
         }
-        const res = await fetch(`/api/storefront/recommendations?${qs.toString()}`, { cache: "no-store" });
+        // Cache recommendations for 2 minutes (120 seconds)
+        const res = await fetch(`/api/storefront/recommendations?${qs.toString()}`, {
+          next: { revalidate: 120 }
+        });
         const data = await res.json();
         if (!cancelled && res.ok && data?.success) {
           setItems(Array.isArray(data.data) ? data.data : []);

@@ -1,20 +1,12 @@
 import { ProductGrid } from "../organisms/product-grid";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { storefrontProductsService } from "@/server/storefront/services/products.service";
 
 async function getFeaturedProducts() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://modestwear.cloud";
-    const res = await fetch(`${baseUrl}/api/storefront/products/featured?limit=8`, {
-      next: { revalidate: 60 }, // ISR: revalidate every 60 seconds
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch featured products");
-    }
-
-    const data = await res.json();
-    return data.success ? data.data : [];
+    const data = await storefrontProductsService.getFeatured(8);
+    return Array.isArray(data) ? data : [];
   } catch (error) {
     console.error("Error fetching featured products:", error);
     return [];

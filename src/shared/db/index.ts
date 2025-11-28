@@ -15,23 +15,25 @@ const sslRequired = sslEnv === "true" || sslEnv === "require" || (process.env.DA
 const pool = new Pool(
   hasConnStr
     ? {
-        connectionString: process.env.DATABASE_URL,
-        max: 20,
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 2000,
-        ssl: sslRequired ? { rejectUnauthorized: false } : false,
-      }
+      connectionString: process.env.DATABASE_URL,
+      max: 30, // Increased from 20 for better concurrency
+      idleTimeoutMillis: 60000, // Increased to 60s for better connection reuse
+      connectionTimeoutMillis: 2000,
+      statement_timeout: 30000, // 30s query timeout
+      ssl: sslRequired ? { rejectUnauthorized: false } : false,
+    }
     : {
-        host: process.env.DB_HOST || "localhost",
-        port: Number(process.env.DB_PORT) || 5432,
-        user: process.env.DB_USER || "wagih",
-        password: process.env.DB_PASSWORD || "AlAl@!@!12!@",
-        database: process.env.DB_NAME || "modestwear_db",
-        max: 20,
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 2000,
-        ssl: sslRequired ? { rejectUnauthorized: false } : false,
-      },
+      host: process.env.DB_HOST || "localhost",
+      port: Number(process.env.DB_PORT) || 5432,
+      user: process.env.DB_USER || "wagih",
+      password: process.env.DB_PASSWORD || "AlAl@!@!12!@",
+      database: process.env.DB_NAME || "modestwear_db",
+      max: 30, // Increased from 20 for better concurrency
+      idleTimeoutMillis: 60000, // Increased to 60s for better connection reuse
+      connectionTimeoutMillis: 2000,
+      statement_timeout: 30000, // 30s query timeout
+      ssl: sslRequired ? { rejectUnauthorized: false } : false,
+    },
 );
 
 // Initialize Drizzle instance

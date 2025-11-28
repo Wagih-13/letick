@@ -34,7 +34,10 @@ export function ShippingMethodSelector({
     (async () => {
       try {
         setLoading(true);
-        const res = await fetch("/api/storefront/shipping/methods");
+        // Cache shipping methods for 10 minutes (600 seconds)
+        const res = await fetch("/api/storefront/shipping/methods", {
+          next: { revalidate: 600 }
+        });
         const data = await res.json();
         if (!res.ok || !data.success) throw new Error(data?.error?.message || "Failed to load shipping methods");
         if (!mounted) return;
@@ -102,11 +105,10 @@ export function ShippingMethodSelector({
               return (
                 <div
                   key={method.id}
-                  className={`flex items-start space-x-3 p-4 border-2 rounded-lg transition-all cursor-pointer ${
-                    isSelected
+                  className={`flex items-start space-x-3 p-4 border-2 rounded-lg transition-all cursor-pointer ${isSelected
                       ? "border-primary bg-primary/5"
                       : "border-border hover:border-muted-foreground/20"
-                  }`}
+                    }`}
                   onClick={() => setSelected(method.id)}
                 >
                   <RadioGroupItem value={method.id} id={method.id} />

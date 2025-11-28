@@ -20,13 +20,16 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     let aborted = false;
     (async () => {
       try {
-        const res = await fetch("/api/storefront/currency", { cache: "no-store" });
+        // Cache currency for 10 minutes (600 seconds)
+        const res = await fetch("/api/storefront/currency", {
+          next: { revalidate: 600 }
+        });
         if (!res.ok) return;
         const data = await res.json();
         if (!aborted && data?.success && data?.data?.code) {
           setCurrency({ code: String(data.data.code) });
         }
-      } catch {}
+      } catch { }
     })();
     return () => {
       aborted = true;

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 
 // Animation and typing timings (tweak as desired)
 const REVEAL_DELAY_STEP = 0.06; // seconds between line starts
@@ -240,31 +241,34 @@ export function HeroSection() {
           {/* Right column */}
           <div className="flex items-center justify-center lg:relative">
             <div className="w-full max-w-[560px] lg:relative">
-              <img
+              <Image
                 src="/Storefront/images/dress.png"
                 alt="Featured"
                 className="w-full h-auto object-contain animate-fade-in will-change-transform"
-                loading="eager"
-                decoding="async"
+                priority
+                width={560}
+                height={700}
                 ref={dressRef}
               />
-              <img
+              <Image
                 src="/Storefront/images/vector2.png"
                 alt=""
                 aria-hidden
                 className="hidden lg:block pointer-events-none select-none absolute w-20 sm:w-24 opacity-90 -rotate-12 animate-float-slow will-change-transform"
                 loading="lazy"
-                decoding="async"
+                width={96}
+                height={96}
                 ref={rose1Ref}
                 style={{ top: "14%", right: "8%" }}
               />
-              <img
+              <Image
                 src="/Storefront/images/vector2.png"
                 alt=""
                 aria-hidden
                 className="hidden lg:block pointer-events-none select-none absolute w-14 sm:w-16 opacity-90 rotate-6 animate-float-slower will-change-transform"
                 loading="lazy"
-                decoding="async"
+                width={64}
+                height={64}
                 ref={rose2Ref}
                 style={{ bottom: "40%", left: "7%" }}
               />

@@ -207,35 +207,46 @@ These serve as the fallback; there is no separate default.css file. */
 /* Utility: hide scrollbars but allow scrolling */
 .no-scrollbar,
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
+
 .no-scrollbar::-webkit-scrollbar,
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
+  /* Chrome, Safari */
 }
 
 /* Modal-specific scrollbar: fallback when OS forces scrollbars */
 .modal-scrollbar {
   /* Prefer hidden via .no-scrollbar; if not applied, keep it very thin and blended */
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: var(--popover) var(--popover); /* Track & thumb same as modal bg */
+  scrollbar-width: thin;
+  /* Firefox */
+  scrollbar-color: var(--popover) var(--popover);
+  /* Track & thumb same as modal bg */
 }
+
 .modal-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
+
 .modal-scrollbar::-webkit-scrollbar-track {
   background: var(--popover);
 }
+
 .modal-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--popover); /* Blend with modal */
+  background: var(--popover);
+  /* Blend with modal */
   border-radius: 9999px;
   border: 2px solid var(--popover);
 }
 
 /* Global pointer cursor for interactive elements */
 @layer base {
+
   button,
   a,
   [role='button'],
@@ -248,12 +259,14 @@ These serve as the fallback; there is no separate default.css file. */
   input[type='datetime-local'] {
     cursor: pointer;
   }
+
   /* Hand cursor on the native calendar/time picker icon */
   input[type='date']::-webkit-calendar-picker-indicator,
   input[type='datetime-local']::-webkit-calendar-picker-indicator,
   input[type='time']::-webkit-calendar-picker-indicator {
     cursor: pointer;
   }
+
   :disabled,
   [aria-disabled='true'] {
     cursor: not-allowed;
@@ -262,6 +275,11 @@ These serve as the fallback; there is no separate default.css file. */
 
 /* Global keyframes for MovingBanner (was previously in styled-jsx) */
 @keyframes bannerScroll {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }

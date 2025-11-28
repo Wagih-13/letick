@@ -1,17 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
+import { storefrontCategoriesService } from "@/server/storefront/services/categories.service";
 
 async function getTopCategories() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://modestwear.cloud";
-    const res = await fetch(`${baseUrl}/api/storefront/categories`, {
-      next: { revalidate: 60 },
-    });
-
-    if (!res.ok) return [];
-
-    const data = await res.json();
-    return data.success ? data.data.categories.slice(0, 8) : [];
+    // Read top-level categories directly from DB
+    const cats = await storefrontCategoriesService.getTopLevel(8);
+    return Array.isArray(cats) ? cats : [];
   } catch (error) {
     console.error("Error fetching categories:", error);
     return [];

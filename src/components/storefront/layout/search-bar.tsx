@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useDebounce } from "use-debounce";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface SearchBarProps {
   onClose?: () => void;
@@ -281,7 +282,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
                     role="option"
                     aria-selected={isActive}
                   >
-                    <img src={p.primaryImage} alt="" className="h-10 w-10 rounded object-cover" />
+                    <Image src={p.primaryImage} alt="" width={40} height={40} className="h-10 w-10 rounded object-cover" />
                     <div className="flex-1">
                       <div className="font-medium line-clamp-1">{highlight(p.name, debouncedQuery)}</div>
                       <div className="text-xs text-muted-foreground">

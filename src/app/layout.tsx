@@ -9,11 +9,20 @@ import { PreferencesStoreProvider } from "@/stores/preferences/preferences-provi
 import { THEME_MODE_VALUES, THEME_PRESET_VALUES, type ThemePreset, type ThemeMode } from "@/types/preferences/theme";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap", // Prevent invisible text while font loads
+  variable: "--font-inter",
+  preload: true,
+});
 
 export const metadata: Metadata = {
   title: APP_CONFIG.meta.title,
   description: APP_CONFIG.meta.description,
+  robots: {
+    index: false, // Admin/dashboard should not be indexed
+    follow: false,
+  },
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
@@ -27,7 +36,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       data-theme-preset={themePreset}
       suppressHydrationWarning
     >
-      <body className={`${inter.className} min-h-screen antialiased`}>
+      <body className={`${inter.className} min-h-screen antialiased`} suppressHydrationWarning>
         <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
           {children}
           <Toaster />

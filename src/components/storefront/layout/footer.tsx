@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -15,12 +16,13 @@ export function StorefrontFooter() {
           {/* Company Info */}
           <div>
             <Link href="/" className="inline-flex items-center mb-4">
-              <img
+              <Image
                 src="/Storefront/images/logo%20(1).png"
                 alt="Modest Wear"
+                width={160}
+                height={40}
                 className="h-7 w-auto"
-                loading="lazy"
-                decoding="async"
+                priority
               />
               <span className="sr-only">Modest Wear</span>
             </Link>

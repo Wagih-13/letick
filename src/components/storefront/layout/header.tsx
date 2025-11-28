@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import { ShoppingCart, Menu, X, Search, User, Heart, ChevronDown, Bell, Megaphone, AlertTriangle, PackageCheck, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchBar } from "./search-bar";
@@ -282,12 +283,13 @@ export function StorefrontHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center mr-4 sm:mr-6 lg:mr-8">
-            <img
+            <Image
               src="/Storefront/images/logo%20(1).png"
               alt="Modest Wear"
+              width={140}
+              height={32}
               className="h-6 w-auto sm:h-7"
-              loading="lazy"
-              decoding="async"
+              priority
             />
           </Link>
 

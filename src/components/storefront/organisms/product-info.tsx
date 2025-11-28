@@ -47,7 +47,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
     let aborted = false;
     (async () => {
       try {
-        const res = await fetch("/api/storefront/offers", { cache: "no-store" });
+        // Cache offers for 5 minutes (300 seconds)
+        const res = await fetch("/api/storefront/offers", {
+          next: { revalidate: 300 }
+        });
         const data = await res.json();
         if (!res.ok || !data?.success) return;
         const items: any[] = Array.isArray(data.data?.items) ? data.data.items : [];
@@ -68,7 +71,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             break;
           }
         }
-      } catch {}
+      } catch { }
     })();
     return () => { aborted = true; };
   }, [product.id, product.categories?.length]);

@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 export default function MovingBanner({
   text = "MODEST WEAR",
   speed = 40,
@@ -45,10 +47,11 @@ function Row({ text, speed, offset, includeLogo, logoSrc, logoHeight }: { text: 
           <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-wide uppercase" style={{fontFamily: `"Bodoni Moda", serif`}}>{text}</span>
           {includeLogo ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoSrc} alt="" className="opacity-95" style={{ height: logoHeight, width: "auto" }} loading="lazy" decoding="async" />
+            <Image src={logoSrc || "/Storefront/images/logo (1).png"} alt="" width={logoHeight || 20} height={logoHeight || 20} className="opacity-95" style={{ height: logoHeight, width: "auto" }} />
           ) : null}
         </div>
       ))}
     </div>
   );
 }
+

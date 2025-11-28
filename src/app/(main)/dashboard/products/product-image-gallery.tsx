@@ -4,6 +4,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Image from "next/image";
 import { toast } from "sonner";
 import { Trash2, Star, StarOff, Upload, Loader2 } from "lucide-react";
 
@@ -225,7 +226,7 @@ export function ProductImageGallery({ productId, onDraftChange }: { productId?: 
             <div key={img.id} className="rounded-md border p-2">
               <div className="relative aspect-square overflow-hidden rounded">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.url} alt={img.altText || ""} className="h-full w-full object-cover" loading="lazy" decoding="async" />
+                <Image src={img.url} alt={img.altText || ""} fill sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 25vw" className="object-cover" />
                 {img.isPrimary ? (
                   <div className="absolute left-1 top-1 rounded bg-primary px-1.5 py-0.5 text-xs text-primary-foreground">Primary</div>
                 ) : null}

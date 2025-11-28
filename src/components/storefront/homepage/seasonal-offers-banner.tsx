@@ -22,14 +22,17 @@ export function SeasonalOffersBanner() {
     let aborted = false;
     (async () => {
       try {
-        const res = await fetch("/api/storefront/offers", { cache: "no-store" });
+        // Cache offers for 5 minutes (300 seconds)
+        const res = await fetch("/api/storefront/offers", {
+          next: { revalidate: 300 }
+        });
         const data = await res.json();
         if (!aborted && res.ok && data?.success) {
           const items = Array.isArray(data.data?.items) ? data.data.items : [];
           const seasonal = items.filter((o: any) => o.startsAt || o.endsAt);
           setOffers(seasonal.slice(0, 4));
         }
-      } catch {}
+      } catch { }
     })();
     return () => {
       aborted = true;

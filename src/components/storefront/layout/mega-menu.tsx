@@ -19,7 +19,10 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch("/api/storefront/categories", { cache: "no-store" });
+        // Cache categories for 5 minutes (300 seconds)
+        const res = await fetch("/api/storefront/categories", { 
+          next: { revalidate: 300 }
+        });
         const data = await res.json();
         if (!cancelled && res.ok && data?.success) {
           const cats = (data.data?.categories || []).slice(0, 12);

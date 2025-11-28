@@ -29,7 +29,7 @@ export async function apiRequest<T>(
 ): Promise<T> {
   const url = endpoint.startsWith("http")
     ? endpoint
-    : `${process.env.NEXT_PUBLIC_API_URL || ""}${endpoint}`;
+    : `${process.env.NEXT_PUBLIC_APP_URL || ""}${endpoint}`;
 
   try {
     const response = await fetch(url, {

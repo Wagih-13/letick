@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff, Loader2, CheckCircle2, Apple, Mail, Globe } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { siteConfig } from "@/config/site";
+import Image from "next/image";
 
 export default function RegisterV2() {
   const router = useRouter();
@@ -101,7 +102,7 @@ export default function RegisterV2() {
         <div className="relative z-10 flex flex-col justify-between p-12">
           <div>
             <Link href="/" className="flex items-center gap-3 text-2xl font-bold">
-              <img src="/Storefront/images/logo%20(1).png" alt={siteConfig.name} className="h-7 w-auto" loading="lazy" decoding="async" />
+              <Image src="/Storefront/images/logo%20(1).png" alt={siteConfig.name} width={160} height={40} className="h-7 w-auto" priority />
               <span>{siteConfig.name}</span>
             </Link>
           </div>
@@ -142,7 +143,7 @@ export default function RegisterV2() {
               className="w-full h-11"
               onClick={() => signIn("google", { callbackUrl: searchParams.get("callbackUrl") || "/" })}
             >
-              <img src="/Storefront/images/google.svg" alt="Google" className="h-5 w-5 mr-2" loading="lazy" decoding="async" />
+              <Image src="/Storefront/images/google.svg" alt="Google" width={20} height={20} className="h-5 w-5 mr-2" />
               Continue with Google
             </Button>
             <Button

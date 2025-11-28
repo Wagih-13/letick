@@ -21,25 +21,32 @@ function uniqueFilename(): string {
 function getDestDir(folder: string) {
   const now = new Date();
   
-  // المسار الخارجي - خارج المشروع
-  const externalBasePath = "/home/wagih/uploads/modeswear";
+  // Store uploads inside the project under /public/uploads
+  const uploadsBasePath = path.join(process.cwd(), "public", "uploads");
   
-  // Preserve existing structure: products go under /year/month
+  // Products: /public/uploads/products/<year>/<month>
   if (folder === "products") {
     const year = String(now.getFullYear());
     const month = String(now.getMonth() + 1).padStart(2, "0");
-    const baseDir = path.join(externalBasePath, folder, year, month);
+    const baseDir = path.join(uploadsBasePath, folder, year, month);
     const publicBase = path.posix.join("/uploads", folder, year, month);
     return { baseDir, publicBase };
   }
   
-  // Other folders stay flat under /uploads/<folder>
-  const baseDir = path.join(externalBasePath, folder);
+  // Other folders: /public/uploads/<folder>
+  const baseDir = path.join(uploadsBasePath, folder);
   const publicBase = path.posix.join("/uploads", folder);
   return { baseDir, publicBase };
 }
 
-export async function processImageUpload(file: File, folder: string, quality: number = 82): Promise<ProcessedImage> {
+function getResizeConfig(folder: string) {
+  if (folder === "products") return { width: 1600, height: 1600, quality: 70 };
+  if (folder === "categories") return { width: 1200, height: 800, quality: 68 };
+  if (folder === "avatars") return { width: 512, height: 512, quality: 70 };
+  return { width: 1400, height: 1400, quality: 70 };
+}
+
+export async function processImageUpload(file: File, folder: string, quality: number = 68): Promise<ProcessedImage> {
   const { baseDir, publicBase } = getDestDir(folder);
   await fs.mkdir(baseDir, { recursive: true });
 
@@ -48,9 +55,12 @@ export async function processImageUpload(file: File, folder: string, quality: nu
 
   // Convert any supported input to WebP with target quality
   // Use animated: true to preserve simple animations when supported
+  const cfg = getResizeConfig(folder);
+  const q = Math.max(1, Math.min(100, Number.isFinite(quality as any) ? quality : cfg.quality));
   const webpBuffer = await sharp(inputBuffer, { animated: true })
     .rotate()
-    .webp({ quality: Math.max(1, Math.min(100, quality)), effort: 4 })
+    .resize({ width: cfg.width, height: cfg.height, fit: "inside", withoutEnlargement: true })
+    .webp({ quality: q, effort: 6, smartSubsample: true })
     .toBuffer();
 
   const filename = uniqueFilename();
