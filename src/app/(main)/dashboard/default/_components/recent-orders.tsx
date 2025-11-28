@@ -65,7 +65,7 @@ export function RecentOrders({ limit = 10 }: { limit?: number }) {
               </TableRow>
             ) : null}
             {items.map((o) => {
-              const money = new Intl.NumberFormat(undefined, { style: "currency", currency: o.currency || "USD" });
+              const money = new Intl.NumberFormat(undefined, { style: "currency", currency: o.currency || "EGP" });
               const total = typeof o.totalAmount === "string" ? parseFloat(o.totalAmount) : o.totalAmount;
               return (
                 <TableRow key={o.id}>

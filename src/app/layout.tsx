@@ -2,13 +2,13 @@ import { ReactNode } from "react";
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
+import { Providers } from './providers';
 import { Toaster } from "@/components/ui/sonner";
 import { APP_CONFIG } from "@/config/app-config";
 import { getPreference } from "@/server/server-actions";
 import { PreferencesStoreProvider } from "@/stores/preferences/preferences-provider";
 import { THEME_MODE_VALUES, THEME_PRESET_VALUES, type ThemePreset, type ThemeMode } from "@/types/preferences/theme";
-
+const BUILD_ID = process.env.NEXT_PUBLIC_BUILD_ID || Date.now();
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -31,7 +31,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     >
       <body className={`${inter.className} min-h-screen antialiased`}>
         <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
-          {children}
+        <Providers>{children}</Providers>
           <Toaster />
         </PreferencesStoreProvider>
       </body>

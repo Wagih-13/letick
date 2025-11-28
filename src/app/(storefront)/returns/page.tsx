@@ -13,7 +13,7 @@ export default function ReturnsPage() {
       <div className="mb-4">
         <PageBreadcrumbs items={[{ href: "/", label: "Home" }, { label: "Help" }, { label: "Returns & Exchanges" }]} />
       </div>
-      <PageHeader title="Returns & Exchanges" subtitle="Hassle-free returns within 30 days. Free exchanges on eligible items." />
+      <PageHeader title="Returns & Exchanges" subtitle="Hassle-free returns within 14 days. Free exchanges on eligible items." />
 
       <Tabs defaultValue="returns" className="w-full">
         <TabsList className="mb-4">
@@ -25,7 +25,7 @@ export default function ReturnsPage() {
           <div className="rounded-xl border ring-1 ring-border p-6 bg-card">
             <h2 className="font-semibold mb-3">How returns work</h2>
             <ol className="list-decimal ml-5 space-y-2 text-sm text-muted-foreground">
-              <li>Start your return from <Link href="/account/orders" className="underline">Order History</Link> within 30 days.</li>
+              <li>Start your return from <Link href="/account/orders" className="underline">Order History</Link> within 14 days.</li>
               <li>Print the prepaid label and pack your items securely with tags intact.</li>
               <li>Drop off at the carrier. Refunds are issued 3–5 business days after inspection.</li>
             </ol>

@@ -16,6 +16,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { getInitials } from "@/lib/utils";
 import { getSession, signOut } from "next-auth/react";
+import { siteConfig } from "@/config/site";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -89,7 +90,10 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+            <DropdownMenuItem onClick={() => {
+              const cb = process.env.NODE_ENV === "production" ? siteConfig.url : "/";
+              signOut({ callbackUrl: cb });
+            }}>
               <LogOut />
               Log out
             </DropdownMenuItem>

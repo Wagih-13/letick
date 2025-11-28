@@ -34,7 +34,7 @@ export default function RefundsPage() {
   const [form, setForm] = useState({
     orderId: "",
     amount: "0.00",
-    currency: "USD",
+    currency: "EGP",
     reason: "",
     status: "pending",
   });
@@ -133,7 +133,7 @@ export default function RefundsPage() {
   }
 
   const money = useMemo(() =>
-    new Intl.NumberFormat(undefined, { style: "currency", currency: metrics?.currency || "USD" }),
+    new Intl.NumberFormat(undefined, { style: "currency", currency: metrics?.currency || "EGP" }),
   [metrics?.currency]);
 
   useEffect(() => {
@@ -206,7 +206,7 @@ export default function RefundsPage() {
 
   function resetForm() {
     setEditing(null);
-    setForm({ orderId: "", amount: "0.00", currency: "USD", reason: "", status: "pending" });
+    setForm({ orderId: "", amount: "0.00", currency: "EGP", reason: "", status: "pending" });
     setOrderItems([]);
     setSelected({});
   }
@@ -378,7 +378,7 @@ export default function RefundsPage() {
                           <div key={it.id} className="flex items-center justify-between gap-3">
                             <div className="min-w-0 flex-1">
                               <div className="truncate text-sm font-medium">{it.productName}</div>
-                              <div className="text-muted-foreground text-xs">Qty: {it.quantity} • Unit: ${it.unitPrice}</div>
+                              <div className="text-muted-foreground text-xs">Qty: {it.quantity} • Unit: EGY {it.unitPrice}</div>
                             </div>
                             <div className="flex items-center gap-2">
                               <Label className="text-xs">Refund Qty</Label>

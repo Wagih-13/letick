@@ -504,7 +504,8 @@ export function StorefrontHeader() {
                       } catch {}
                       // Best-effort server-side clear and cookie reset
                       fetch("/api/storefront/cart/clear", { method: "POST" }).finally(() => {
-                        signOut({ callbackUrl: "/" });
+                        const cb = process.env.NODE_ENV === "production" ? siteConfig.url : "/";
+                        signOut({ callbackUrl: cb });
                       });
                     }}
                   >

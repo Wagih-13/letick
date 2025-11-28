@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn, getInitials } from "@/lib/utils";
 import { getSession, signOut } from "next-auth/react";
+import { siteConfig } from "@/config/site";
 
 export function AccountSwitcher() {
   const [activeUser, setActiveUser] = useState<{ id?: string; name: string; email: string; avatar: string; role?: string } | null>(null);
@@ -69,7 +70,10 @@ export function AccountSwitcher() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+        <DropdownMenuItem onClick={() => {
+          const cb = process.env.NODE_ENV === "production" ? siteConfig.url : "/";
+          signOut({ callbackUrl: cb });
+        }}>
           <LogOut />
           Log out
         </DropdownMenuItem>

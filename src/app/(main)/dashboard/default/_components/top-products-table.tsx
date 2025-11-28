@@ -21,7 +21,7 @@ export function TopProductsTable({ limit = 5 }: { limit?: number }) {
     };
   }, [range, limit]);
 
-  const money = useMemo(() => new Intl.NumberFormat(undefined, { style: "currency", currency: "USD" }), []);
+  const money = useMemo(() => new Intl.NumberFormat(undefined, { style: "currency", currency: "EGP" }), []);
 
   return (
     <Card>

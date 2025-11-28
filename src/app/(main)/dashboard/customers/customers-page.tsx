@@ -23,7 +23,7 @@ export default function CustomersPage() {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<CustomerRow[]>([]);
   const [total, setTotal] = useState(0);
-  const [currency, setCurrency] = useState<string>("USD");
+  const [currency, setCurrency] = useState<string>("EGP");
 
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<string>("all");

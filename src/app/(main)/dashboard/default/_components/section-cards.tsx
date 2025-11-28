@@ -11,7 +11,7 @@ export function SectionCards() {
   const [data, setData] = useState<any | null>(null);
 
   const money = useMemo(
-    () => new Intl.NumberFormat(undefined, { style: "currency", currency: data?.currency || "USD" }),
+    () => new Intl.NumberFormat(undefined, { style: "currency", currency: data?.currency || "EGP" }),
     [data?.currency],
   );
 

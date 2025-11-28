@@ -126,7 +126,7 @@ export default function DiscountsPage() {
     } catch {}
   }
 
-  const money = useMemo(() => new Intl.NumberFormat(undefined, { style: "currency", currency: metrics?.currency || "USD" }), [metrics?.currency]);
+  const money = useMemo(() => new Intl.NumberFormat(undefined, { style: "currency", currency: metrics?.currency || "EGP" }), [metrics?.currency]);
 
   const table = useDataTableInstance({
     data: items,

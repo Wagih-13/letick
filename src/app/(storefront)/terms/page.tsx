@@ -26,7 +26,7 @@ export default function TermsPage() {
               { id: "accounts", title: "Accounts" },
               { id: "orders", title: "Orders & Payments" },
               { id: "shipping", title: "Shipping & Delivery" },
-              { id: "returns", title: "Returns & Exchanges" },
+              { id: "returns", title: "" },
               { id: "ip", title: "Intellectual Property" },
               { id: "user-content", title: "User Content" },
               { id: "prohibited", title: "Prohibited Activities" },
@@ -66,7 +66,7 @@ export default function TermsPage() {
             <p>Estimated delivery times are not guaranteed. Risk of loss passes to you upon delivery to the carrier.</p>
 
             <h2 id="returns" className="scroll-mt-24">6. Returns & Exchanges</h2>
-            <p>Returns are accepted within 30 days on eligible items per our Returns & Exchanges policy.</p>
+            <p>Returns are accepted within 14 days on eligible items per our Returns & Exchanges policy.</p>
 
             <h2 id="ip" className="scroll-mt-24">7. Intellectual Property</h2>
             <p>All content and trademarks are owned by us or our licensors. You may not use them without permission.</p>

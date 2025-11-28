@@ -310,14 +310,14 @@ export default function ProductsPage() {
             <div className="text-xs text-muted-foreground">Avg price</div>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </div>
-          <div className="text-2xl font-semibold">{new Intl.NumberFormat(undefined, { style: "currency", currency: metrics?.currency || "USD" }).format(Number(metrics?.avgPrice ?? 0))}</div>
+          <div className="text-2xl font-semibold">{new Intl.NumberFormat(undefined, { style: "currency", currency: metrics?.currency || "EGP" }).format(Number(metrics?.avgPrice ?? 0))}</div>
         </div>
         <div className="rounded-lg border p-4 col-span-1">
           <div className="flex items-center justify-between">
             <div className="text-xs text-muted-foreground">Revenue (30d)</div>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </div>
-          <div className="text-2xl font-semibold">{new Intl.NumberFormat(undefined, { style: "currency", currency: metrics?.currency || "USD" }).format(Number(metrics?.revenue30d ?? 0))}</div>
+          <div className="text-2xl font-semibold">{new Intl.NumberFormat(undefined, { style: "currency", currency: metrics?.currency || "EGP" }).format(Number(metrics?.revenue30d ?? 0))}</div>
         </div>
         <div className="rounded-lg border p-4 col-span-1">
           <div className="flex items-center justify-between">

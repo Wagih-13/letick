@@ -58,7 +58,7 @@ export function getCustomerColumns(actions: {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Spent" />,
       cell: ({ row }) => {
         const v = Number(row.original.totalSpent ?? 0);
-        const c = opts?.currency || "USD";
+        const c = opts?.currency || "EGP";
         return <span className="text-sm">{new Intl.NumberFormat(undefined, { style: "currency", currency: c }).format(v)}</span>;
       },
     },
@@ -67,7 +67,7 @@ export function getCustomerColumns(actions: {
       header: ({ column }) => <DataTableColumnHeader column={column} title="AOV" />,
       cell: ({ row }) => {
         const v = Number(row.original.avgOrderValue ?? 0);
-        const c = opts?.currency || "USD";
+        const c = opts?.currency || "EGP";
         return <span className="text-sm">{new Intl.NumberFormat(undefined, { style: "currency", currency: c }).format(v)}</span>;
       },
     },
