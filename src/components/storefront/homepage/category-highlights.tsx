@@ -3,7 +3,7 @@ import Image from "next/image";
 
 async function getTopCategories() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://modestwear.cloud";
     const res = await fetch(`${baseUrl}/api/storefront/categories`, {
       next: { revalidate: 60 },
     });

@@ -8,7 +8,7 @@ interface RelatedProductsProps {
 async function getRelatedProducts(productId: string) {
   try {
     // Note: We need to create this endpoint
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://modestwear.cloud";
     const res = await fetch(
       `${baseUrl}/api/storefront/products/${productId}/related?limit=4`,
       {

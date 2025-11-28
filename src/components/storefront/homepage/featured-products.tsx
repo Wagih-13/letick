@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 async function getFeaturedProducts() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://modestwear.cloud";
     const res = await fetch(`${baseUrl}/api/storefront/products/featured?limit=8`, {
       next: { revalidate: 60 }, // ISR: revalidate every 60 seconds
     });
