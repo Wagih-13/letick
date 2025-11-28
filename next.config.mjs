@@ -24,9 +24,6 @@ const nextConfig = {
     ],
   },
 
-  generateBuildId: async () => {
-    return 'build-' + Date.now();
-  },
 
   async headers() {
     return [
@@ -52,11 +49,7 @@ const nextConfig = {
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
-          },
-          {
-            key: 'X-Build-ID',
-            value: 'build-' + Date.now(),
-          },
+          }
         ],
       },
     ];
