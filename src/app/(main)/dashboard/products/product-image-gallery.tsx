@@ -1,12 +1,11 @@
-"use client";
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { toast } from "sonner";
-import { Trash2, Star, StarOff, Upload, Loader2 } from "lucide-react";
+import { Trash2, Star, StarOff } from "lucide-react";
+import { ImageUploadInput } from "@/components/admin/image-upload-input";
 
 type ImageItem = {
   id: string;
@@ -20,7 +19,6 @@ type ImageItem = {
 export function ProductImageGallery({ productId, onDraftChange }: { productId?: string; onDraftChange?: (items: Array<{ id: string; url: string; altText?: string | null; isPrimary?: boolean }>) => void }) {
   const [items, setItems] = React.useState<ImageItem[]>([]);
   const [loading, setLoading] = React.useState(false);
-  const [uploading, setUploading] = React.useState(false);
   // Reorder controls removed per request
 
   React.useEffect(() => {
@@ -53,20 +51,12 @@ export function ProductImageGallery({ productId, onDraftChange }: { productId?: 
     }
   }
 
-  async function onFilesSelected(fileList: FileList | File[]) {
-    const files = Array.from(fileList || []);
-    if (!files.length) return;
-    try {
-      setUploading(true);
-      const fd = new FormData();
-      files.forEach((f) => fd.append("files", f));
-      fd.append("folder", "products");
-      const up = await fetch(`/api/v1/uploads`, { method: "POST", body: fd });
-      const upData = await up.json();
-      if (!up.ok) throw new Error(upData?.error?.message || "Upload failed");
-      const uploaded = (upData.data?.items || []).map((it: any) => ({ url: it.url, altText: null as string | null }));
-      if (!uploaded.length) return;
-      if (productId) {
+  async function handleImagesAdded(urls: string[]) {
+    if (!urls.length) return;
+    const uploaded = urls.map((url) => ({ url, altText: null as string | null }));
+
+    if (productId) {
+      try {
         const save = await fetch(`/api/v1/products/${productId}/images`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -74,28 +64,24 @@ export function ProductImageGallery({ productId, onDraftChange }: { productId?: 
         });
         const saveData = await save.json();
         if (!save.ok) throw new Error(saveData?.error?.message || "Failed to save images");
-        toast.success(`Added ${uploaded.length} image${uploaded.length > 1 ? "s" : ""}`);
         void load();
-      } else {
-        // Draft mode: keep locally
-        setItems((prev) => {
-          const toAdd = uploaded.map((u: { url: string; altText: string | null }, idx: number) => ({
-            id: (globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2)) + "_" + idx,
-            url: u.url,
-            altText: u.altText,
-            sortOrder: (prev.length + idx),
-            isPrimary: prev.length === 0 && idx === 0 ? true : false,
-          }));
-          const next = [...prev, ...toAdd];
-          onDraftChange?.(next.map(({ id, url, altText, isPrimary }) => ({ id, url, altText, isPrimary })));
-          toast.success(`Added ${toAdd.length} image${toAdd.length > 1 ? "s" : ""}`);
-          return next;
-        });
+      } catch (e: any) {
+        toast.error(e.message || "Failed to save images");
       }
-    } catch (e: any) {
-      toast.error(e.message || "Upload failed");
-    } finally {
-      setUploading(false);
+    } else {
+      // Draft mode: keep locally
+      setItems((prev) => {
+        const toAdd = uploaded.map((u: { url: string; altText: string | null }, idx: number) => ({
+          id: (globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2)) + "_" + idx,
+          url: u.url,
+          altText: u.altText,
+          sortOrder: (prev.length + idx),
+          isPrimary: prev.length === 0 && idx === 0 ? true : false,
+        }));
+        const next = [...prev, ...toAdd];
+        onDraftChange?.(next.map(({ id, url, altText, isPrimary }) => ({ id, url, altText, isPrimary })));
+        return next;
+      });
     }
   }
 
@@ -177,44 +163,13 @@ export function ProductImageGallery({ productId, onDraftChange }: { productId?: 
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <Label className="text-base">Images</Label>
-        <div className="flex items-center gap-2">
-          <label className="inline-flex items-center gap-2">
-            <input
-              type="file"
-              multiple
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              className="hidden"
-              onChange={(e) => e.currentTarget.files && onFilesSelected(e.currentTarget.files)}
-            />
-            <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={(e) => {
-              const input = (e.currentTarget.previousSibling as HTMLInputElement) || null;
-              if (input) input.click();
-            }}>
-              {uploading ? (
-                <>
-                  <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Uploading...
-                </>
-              ) : (
-                <>
-                  <Upload className="mr-1 h-4 w-4" /> Upload
-                </>
-              )}
-            </Button>
-          </label>
-          {/* Reorder save removed */}
-        </div>
       </div>
-      <div
-        className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground"
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          e.preventDefault();
-          const files = Array.from(e.dataTransfer.files || []);
-          if (files.length) void onFilesSelected(files);
-        }}
-      >
-        Drag and drop images here or use the Upload button above.
-      </div>
+
+      <ImageUploadInput
+        folder="products"
+        multiple={true}
+        onImagesAdded={handleImagesAdded}
+      />
 
       {loading ? (
         <div className="text-sm text-muted-foreground">Loading images...</div>

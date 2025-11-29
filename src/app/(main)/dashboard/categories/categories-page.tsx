@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, RefreshCcw, Upload, Trash2, Layers, CheckCircle2, PauseCircle, FolderTree, GitBranch, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Plus, RefreshCcw, Trash2, Layers, CheckCircle2, PauseCircle, FolderTree, GitBranch, Image as ImageIcon } from "lucide-react";
+import { ImageUploadInput } from "@/components/admin/image-upload-input";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,6 @@ export default function CategoriesPage() {
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<CategoryRow | null>(null);
-  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     slug: "",
@@ -91,7 +91,7 @@ export default function CategoriesPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error?.message || "Failed to load metrics");
       setMetrics(data.data || null);
-    } catch {}
+    } catch { }
   }
 
   const table = useDataTableInstance({
@@ -184,26 +184,9 @@ export default function CategoriesPage() {
     }
   }
 
-  async function onFilesSelected(fileList: FileList | File[]) {
-    const files = Array.from(fileList || []);
-    if (!files.length) return;
-    try {
-      setUploading(true);
-      const fd = new FormData();
-      files.forEach((f) => fd.append("files", f));
-      fd.append("folder", "categories");
-      const up = await fetch(`/api/v1/uploads`, { method: "POST", body: fd });
-      const upData = await up.json();
-      if (!up.ok) throw new Error(upData?.error?.message || "Upload failed");
-      const first = (upData.data?.items || [])[0];
-      if (first?.url) {
-        setForm((s) => ({ ...s, image: first.url }));
-        toast.success("Image uploaded");
-      }
-    } catch (e: any) {
-      toast.error(e.message || "Upload failed");
-    } finally {
-      setUploading(false);
+  function handleImagesAdded(urls: string[]) {
+    if (urls.length > 0) {
+      setForm((s) => ({ ...s, image: urls[0] }));
     }
   }
 
@@ -341,54 +324,29 @@ export default function CategoriesPage() {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <Label>Image</Label>
-                  <div className="flex items-center justify-between">
-                    <label className="inline-flex items-center gap-2">
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp,image/gif"
-                        className="hidden"
-                        onChange={(e) => e.currentTarget.files && onFilesSelected(e.currentTarget.files)}
-                      />
-                      <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={(e) => {
-                        const input = (e.currentTarget.previousSibling as HTMLInputElement) || null;
-                        if (input) input.click();
-                      }}>
-                        {uploading ? (
-                          <>
-                            <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Uploading...
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="mr-1 h-4 w-4" /> Upload
-                          </>
-                        )}
-                      </Button>
-                    </label>
-                    {form.image ? (
-                      <Button type="button" variant="destructive" size="sm" onClick={() => setForm((s) => ({ ...s, image: "" }))}>
-                        <Trash2 className="mr-1 h-4 w-4" /> Remove
-                      </Button>
-                    ) : null}
-                  </div>
-                  <div
-                    className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground"
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const files = Array.from(e.dataTransfer.files || []);
-                      if (files.length) void onFilesSelected(files);
-                    }}
-                  >
-                    Drag and drop an image here or use the Upload button above.
-                  </div>
-                  {form.image ? (
-                    <div className="rounded-md border p-2">
-                      <div className="relative aspect-[16/9] overflow-hidden rounded">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <Image src={form.image} alt="Category" fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+
+                  <ImageUploadInput
+                    folder="categories"
+                    multiple={false}
+                    onImagesAdded={handleImagesAdded}
+                  />
+
+                  {form.image && (
+                    <div className="mt-2">
+                      <div className="flex items-center justify-between mb-2">
+                        <Label className="text-sm">Current Image</Label>
+                        <Button type="button" variant="destructive" size="sm" onClick={() => setForm((s) => ({ ...s, image: "" }))}>
+                          <Trash2 className="mr-1 h-4 w-4" /> Remove
+                        </Button>
+                      </div>
+                      <div className="rounded-md border p-2">
+                        <div className="relative aspect-[16/9] overflow-hidden rounded">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <Image src={form.image} alt="Category" fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+                        </div>
                       </div>
                     </div>
-                  ) : null}
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <Checkbox id="isActive" checked={form.isActive} onCheckedChange={(v) => setForm((s) => ({ ...s, isActive: Boolean(v) }))} />

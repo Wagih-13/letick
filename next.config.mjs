@@ -15,12 +15,43 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // يمكن ترك هذا الإعداد عالياً لأنه يخص الصور التي يعالجها Next.js ويضيف لها بصمة فريدة (Fingerprint)
     minimumCacheTTL: 31536000, // cache optimized images for up to 1 year 
+    domains: [
+      'localhost',
+      'res.cloudinary.com',
+      'images.unsplash.com',
+      'cdn.shopify.com',
+    ],
     remotePatterns: [
       {
         protocol: 'http',
         hostname: 'localhost',
         pathname: '/uploads/**',
-      }
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.cloudinary.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.shopify.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.amazonaws.com',
+        pathname: '/**',
+      },
     ],
   },
 
