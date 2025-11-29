@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Download, Package, Copy, ExternalLink } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 export default function OrderConfirmationPage({ params }: { params: Promise<{ id: string }> }) {
   const [orderId, setOrderId] = useState<string>("");
@@ -13,6 +14,7 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
   const [loadingTracking, setLoadingTracking] = useState(false);
   const [trackingError, setTrackingError] = useState<string | null>(null);
   const [shippingAddress, setShippingAddress] = useState<any>(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
     params.then((p) => setOrderId(p.id));
@@ -53,7 +55,7 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
         const res = await fetch(`/api/storefront/orders/${orderId}/tracking`, { cache: "no-store" });
         const data = await res.json();
         if (res.ok && data?.success) setTracking(data.data);
-      } catch {}
+      } catch { }
     }, 10000);
     return () => clearInterval(id);
   }, [orderId, isDelivered]);
@@ -67,7 +69,7 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
         if (!res.ok) return;
         const data = await res.json();
         if (!cancelled && data?.success) setShippingAddress(data.data);
-      } catch {}
+      } catch { }
     })();
     return () => {
       cancelled = true;
@@ -93,82 +95,82 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
             <CheckCircle className="h-20 w-20 text-green-600" />
           </div>
 
-        <div className="border rounded-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Tracking</h2>
-          {loadingTracking && (
-            <p className="text-sm text-muted-foreground">Loading tracking...</p>
-          )}
-          {trackingError && (
-            <p className="text-sm text-destructive">{trackingError}</p>
-          )}
-          {!loadingTracking && !trackingError && (!tracking || tracking.shipments?.length === 0) && (
-            <p className="text-sm text-muted-foreground">Tracking information will appear once your order ships.</p>
-          )}
-          {!loadingTracking && !trackingError && tracking?.shipments?.length > 0 && (
-            <div className="space-y-6">
-              {tracking.shipments.map((s: any) => (
-                <div key={s.id} className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium flex items-center gap-2">
-                      <Package className="h-4 w-4" /> {s.methodName || "Shipment"}
-                    </span>
-                    <span className="text-muted-foreground">
-                      {(s.carrier || "").toString()}
-                      {s.trackingNumber ? ` • ${s.trackingNumber}` : ""}
-                    </span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {s.estimatedDeliveryAt && `Est. delivery: ${new Date(s.estimatedDeliveryAt).toLocaleDateString()}`}
-                  </div>
-                  {(s.trackingNumber || s.carrier) && (
-                    <div className="flex gap-2 mt-2">
-                      {s.trackingNumber && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            if (!s.trackingNumber) return;
-                            void navigator.clipboard.writeText(String(s.trackingNumber));
-                            toast.success("Tracking number copied");
-                          }}
-                        >
-                          <Copy className="h-4 w-4 mr-2" /> Copy tracking
-                        </Button>
-                      )}
-                      {carrierTrackUrl(s.carrier, s.trackingNumber) && (
-                        <Button asChild variant="outline" size="sm">
-                          <a href={carrierTrackUrl(s.carrier, s.trackingNumber)} target="_blank" rel="noreferrer">
-                            <ExternalLink className="h-4 w-4 mr-2" /> Track on carrier
-                          </a>
-                        </Button>
-                      )}
+          <div className="border rounded-lg p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4">Tracking</h2>
+            {loadingTracking && (
+              <p className="text-sm text-muted-foreground">Loading tracking...</p>
+            )}
+            {trackingError && (
+              <p className="text-sm text-destructive">{trackingError}</p>
+            )}
+            {!loadingTracking && !trackingError && (!tracking || tracking.shipments?.length === 0) && (
+              <p className="text-sm text-muted-foreground">Tracking information will appear once your order ships.</p>
+            )}
+            {!loadingTracking && !trackingError && tracking?.shipments?.length > 0 && (
+              <div className="space-y-6">
+                {tracking.shipments.map((s: any) => (
+                  <div key={s.id} className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium flex items-center gap-2">
+                        <Package className="h-4 w-4" /> {s.methodName || "Shipment"}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {(s.carrier || "").toString()}
+                        {s.trackingNumber ? ` • ${s.trackingNumber}` : ""}
+                      </span>
                     </div>
-                  )}
-                  <div className="space-y-3">
-                    {(s.updates || []).map((u: any, idx: number) => (
-                      <div key={idx} className="flex items-start gap-3">
-                        <div className="mt-1 h-2 w-2 rounded-full bg-primary" />
-                        <div className="flex-1">
-                          <div className="flex justify-between text-sm">
-                            <span className="font-medium">{u.status}</span>
-                            <span className="text-xs text-muted-foreground">{new Date(u.occurredAt).toLocaleString()}</span>
-                          </div>
-                          {(u.description || u.location) && (
-                            <p className="text-sm text-muted-foreground">
-                              {u.description}
-                              {u.location ? ` — ${u.location}` : ""}
-                            </p>
-                          )}
-                        </div>
+                    <div className="text-xs text-muted-foreground">
+                      {s.estimatedDeliveryAt && `Est. delivery: ${new Date(s.estimatedDeliveryAt).toLocaleDateString()}`}
+                    </div>
+                    {(s.trackingNumber || s.carrier) && (
+                      <div className="flex gap-2 mt-2">
+                        {s.trackingNumber && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              if (!s.trackingNumber) return;
+                              void navigator.clipboard.writeText(String(s.trackingNumber));
+                              toast.success("Tracking number copied");
+                            }}
+                          >
+                            <Copy className="h-4 w-4 mr-2" /> Copy tracking
+                          </Button>
+                        )}
+                        {carrierTrackUrl(s.carrier, s.trackingNumber) && (
+                          <Button asChild variant="outline" size="sm">
+                            <a href={carrierTrackUrl(s.carrier, s.trackingNumber)} target="_blank" rel="noreferrer">
+                              <ExternalLink className="h-4 w-4 mr-2" /> Track on carrier
+                            </a>
+                          </Button>
+                        )}
                       </div>
-                    ))}
+                    )}
+                    <div className="space-y-3">
+                      {(s.updates || []).map((u: any, idx: number) => (
+                        <div key={idx} className="flex items-start gap-3">
+                          <div className="mt-1 h-2 w-2 rounded-full bg-primary" />
+                          <div className="flex-1">
+                            <div className="flex justify-between text-sm">
+                              <span className="font-medium">{u.status}</span>
+                              <span className="text-xs text-muted-foreground">{new Date(u.occurredAt).toLocaleString()}</span>
+                            </div>
+                            {(u.description || u.location) && (
+                              <p className="text-sm text-muted-foreground">
+                                {u.description}
+                                {u.location ? ` — ${u.location}` : ""}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
           <h1 className="text-3xl font-bold mb-2">Order Confirmed!</h1>
           <p className="text-lg text-muted-foreground mb-4">
             Thank you for your purchase
@@ -196,7 +198,7 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
         {/* Order Details Card */}
         <div className="border rounded-lg p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">Order Details</h2>
-          
+
           <div className="space-y-4">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Order Number:</span>
@@ -226,18 +228,22 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <Link href="/account/orders" className="flex-1">
-            <Button variant="outline" size="lg" className="w-full">
-              <Package className="mr-2 h-5 w-5" />
-              View Order History
-            </Button>
-          </Link>
-          <Link href={`/account/orders/${orderId}/invoice`} target="_blank" className="flex-1">
-            <Button variant="outline" size="lg" className="w-full">
-              <Download className="mr-2 h-5 w-5" />
-              Download Invoice
-            </Button>
-          </Link>
+          {session?.user && (
+            <>
+              <Link href="/account/orders" className="flex-1">
+                <Button variant="outline" size="lg" className="w-full">
+                  <Package className="mr-2 h-5 w-5" />
+                  View Order History
+                </Button>
+              </Link>
+              <Link href={`/account/orders/${orderId}/invoice`} target="_blank" className="flex-1">
+                <Button variant="outline" size="lg" className="w-full">
+                  <Download className="mr-2 h-5 w-5" />
+                  Download Invoice
+                </Button>
+              </Link>
+            </>
+          )}
           <Link href="/" className="flex-1">
             <Button size="lg" className="w-full">
               Continue Shopping
