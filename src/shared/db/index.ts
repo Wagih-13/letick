@@ -25,8 +25,8 @@ const pool = new Pool(
     : {
       host: process.env.DB_HOST || "localhost",
       port: Number(process.env.DB_PORT) || 5432,
-      user: process.env.DB_USER || "wagih",
-      password: process.env.DB_PASSWORD || "AlAl@!@!12!@",
+      user: process.env.DB_USER || "vercel_modestwear",
+      password: process.env.DB_PASSWORD || "G!9r@T7m#Q2^wK8$Z1p*L4f%X5u",
       database: process.env.DB_NAME || "modestwear_db",
       max: 30, // Increased from 20 for better concurrency
       idleTimeoutMillis: 60000, // Increased to 60s for better connection reuse
