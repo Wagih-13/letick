@@ -1,21 +1,17 @@
-import type { Config } from "drizzle-kit";
-import * as dotenv from "dotenv";
+import { defineConfig } from "drizzle-kit";
 
-// Load environment variables from .env file
-dotenv.config();
-
-export default {
-  schema: "./src/shared/db/schema/index.ts",
+export default defineConfig({
+  schema: "./src/shared/db/schema/index.ts", // ✅ المكان الصح
   out: "./drizzle/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    host: process.env.DB_HOST || "localhost",
-    port: Number(process.env.DB_PORT) || 5432,
-    user: process.env.DB_USER || "vercel_modestwear",
-    password: process.env.DB_PASSWORD || "G!9r@T7m#Q2^wK8$Z1p*L4f%X5u",
-    database: process.env.DB_NAME || "modestwear_db",
+    host: "46.202.143.88",
+    port: 5432,
+    user: "vercel_modestwear",
+    password: "G!9r@T7m#Q2^wK8$Z1p*L4f%X5u",
+    database: "modestwear_db",
     ssl: false,
   },
   verbose: true,
   strict: true,
-} satisfies Config;
+});

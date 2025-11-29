@@ -7,10 +7,10 @@ dotenv.config();
 
 async function runMigrations() {
   const pool = new Pool({
-    host: process.env.DB_HOST || "localhost",
+    host: process.env.DB_HOST || "46.202.143.88",
     port: Number(process.env.DB_PORT) || 5432,
-    user: process.env.DB_USER || "wagih",
-    password: process.env.DB_PASSWORD || "AlAl@!@!12!@",
+    user: process.env.DB_USER || "vercel_modestwear",
+    password: process.env.DB_PASSWORD || "G!9r@T7m#Q2^wK8$Z1p*L4f%X5u",
     database: process.env.DB_NAME || "modestwear_db",
   });
 

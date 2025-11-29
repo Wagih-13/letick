@@ -23,7 +23,7 @@ const pool = new Pool(
       ssl: sslRequired ? { rejectUnauthorized: false } : false,
     }
     : {
-      host: process.env.DB_HOST || "localhost",
+      host: process.env.DB_HOST || "46.202.143.88",
       port: Number(process.env.DB_PORT) || 5432,
       user: process.env.DB_USER || "vercel_modestwear",
       password: process.env.DB_PASSWORD || "G!9r@T7m#Q2^wK8$Z1p*L4f%X5u",
