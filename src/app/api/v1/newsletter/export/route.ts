@@ -21,7 +21,16 @@ export async function GET(req: NextRequest) {
 
     const where = filters.length ? and(...filters) : undefined;
 
-    const rows = await db
+    type NewsletterRow = {
+      email: string;
+      name: string | null;
+      status: any;
+      source: string | null;
+      createdAt: any;
+      confirmedAt: any;
+      unsubscribedAt: any;
+    };
+    const rows: NewsletterRow[] = await db
       .select({
         email: schema.newsletterSubscribers.email,
         name: schema.newsletterSubscribers.name,

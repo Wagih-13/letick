@@ -60,7 +60,7 @@ export class UserRepository extends BaseRepositoryImpl<any> {
         .innerJoin(schema.roles, eq(schema.userRoles.roleId, schema.roles.id))
         .where(eq(schema.roles.slug, params.role));
       roleUserIds = roleMatches.map((r: any) => r.userId);
-      if (!roleUserIds.length) {
+      if (!roleUserIds || roleUserIds.length === 0) {
         return { items: [], total: 0 };
       }
     }

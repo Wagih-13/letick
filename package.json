@@ -25,6 +25,7 @@
     "db:seed": "tsx src/shared/db/scripts/seed.ts",
     "db:reset": "tsx src/shared/db/scripts/reset.ts",
     "db:init": "tsx src/shared/db/scripts/init.ts",
+    "db:test-app": "tsx test-app-db.ts",
     "db:create": "tsx src/shared/db/scripts/create-db.ts",
     "db:drop": "tsx src/shared/db/scripts/drop-db.ts",
     "db:setup": "npm run db:create && npm run db:push && npm run db:seed"
@@ -98,6 +99,7 @@
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/parser": "^8.26.0",
     "babel-plugin-react-compiler": "^1.0.0",
+    "baseline-browser-mapping": "^2.8.32",
     "drizzle-kit": "^0.31.7",
     "eslint": "^9.39.0",
     "eslint-config-next": "^16.0.1",

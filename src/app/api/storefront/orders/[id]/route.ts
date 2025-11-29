@@ -4,6 +4,34 @@ import { db } from "@/shared/db";
 import * as schema from "@/shared/db/schema";
 import { and, desc, eq, inArray, or } from "drizzle-orm";
 
+type OrderItemRow = {
+  id: string;
+  productId: string;
+  variantId: string | null;
+  productSlug: string | null;
+  productName: string | null;
+  variantName: string | null;
+  sku: string | null;
+  quantity: number;
+  unitPrice: any;
+  totalPrice: any;
+  variantImage: string | null;
+  primaryImage: string | null;
+};
+
+type ShipmentRow = {
+  id: string;
+  status: string | null;
+  trackingNumber: string | null;
+  carrier: string | null;
+  shippedAt: any;
+  estimatedDeliveryAt: any;
+  deliveredAt: any;
+  methodId: string | null;
+  methodName: string | null;
+  methodPrice: any;
+};
+
 export const runtime = "nodejs";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -34,7 +62,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     const order = orders[0];
 
     // Load items with images
-    const items = await db
+    const items: OrderItemRow[] = await db
       .select({
         id: schema.orderItems.id,
         productId: schema.orderItems.productId,
@@ -59,7 +87,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       .where(eq(schema.orderItems.orderId, order.id as any));
 
     // Load shipments + method
-    const shipments = await db
+    const shipments: ShipmentRow[] = await db
       .select({
         id: schema.shipments.id,
         status: schema.shipments.status,

@@ -33,7 +33,7 @@ export class PreferencesRepository {
     return row;
   }
 
-  async listEnabledUserIds(flag: "promotions" | "backInStock" | "priceDrop", userIds: string[]) {
+  async listEnabledUserIds(flag: "promotions" | "backInStock" | "priceDrop", userIds: string[]): Promise<string[]> {
     if (!userIds.length) return [] as string[];
     const col = flag === "promotions" ? userNotificationPreferences.promotions : flag === "backInStock" ? userNotificationPreferences.backInStock : userNotificationPreferences.priceDrop;
     // rows with any preferences (present)
@@ -41,16 +41,17 @@ export class PreferencesRepository {
       .select({ userId: userNotificationPreferences.userId, promotions: userNotificationPreferences.promotions, backInStock: userNotificationPreferences.backInStock, priceDrop: userNotificationPreferences.priceDrop })
       .from(userNotificationPreferences)
       .where(inArray(userNotificationPreferences.userId, userIds));
-    const presentIds = new Set(presentRows.map((r) => r.userId));
+    const presentIds = new Set(presentRows.map((r) => r.userId as string));
     // allowed = those present and opted-in for the specific flag
-    const allowedPresent = new Set(
+    const allowedPresent: Set<string> = new Set<string>(
       presentRows
         .filter((r) => (flag === "promotions" ? r.promotions : flag === "backInStock" ? r.backInStock : r.priceDrop))
-        .map((r) => r.userId),
+        .map((r) => r.userId as string),
     );
     // defaults = users with no row (presentIds doesn't contain them) -> default opt-in
-    const defaults = userIds.filter((id) => !presentIds.has(id));
-    return [...Array.from(allowedPresent), ...defaults];
+    const defaults: string[] = userIds.filter((id) => !presentIds.has(id));
+    const allowed: string[] = Array.from<string>(allowedPresent.values());
+    return [...allowed, ...defaults];
   }
 }
 

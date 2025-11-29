@@ -27,6 +27,19 @@ export default async function NewsletterSubscribersPage({ searchParams }: { sear
     .orderBy(desc(schema.newsletterSubscribers.createdAt))
     .limit(200);
 
+  type Item = {
+    id: string;
+    email: string;
+    name: string | null;
+    status: string;
+    createdAt: Date | null;
+  };
+
+  const serializedItems = (items as Item[]).map((i: Item) => ({
+    ...i,
+    createdAt: i.createdAt?.toISOString?.() || "",
+  }));
+
   return (
     <div className="space-y-6">
       <div>
@@ -34,7 +47,7 @@ export default async function NewsletterSubscribersPage({ searchParams }: { sear
         <p className="text-sm text-muted-foreground">Filter, export CSV, bulk actions, and manual add.</p>
       </div>
 
-      <NewsletterAdminClient items={items.map((i) => ({ ...i, createdAt: i.createdAt?.toISOString?.() || "" }))} query={q} />
+      <NewsletterAdminClient items={serializedItems} query={q} />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { Star, StarHalf } from "lucide-react";
+import type { ReactElement } from "react";
 import { cn } from "@/lib/utils";
 
 interface RatingStarsProps {
@@ -24,7 +25,7 @@ export function RatingStars({
     lg: "h-5 w-5",
   };
 
-  const stars = [];
+  const stars: ReactElement[] = [];
   for (let i = 1; i <= maxRating; i++) {
     if (i <= Math.floor(rating)) {
       // Full star

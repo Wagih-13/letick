@@ -8,6 +8,15 @@ import { and, desc, eq, inArray, sql } from "drizzle-orm";
 
 export const runtime = "nodejs";
 
+type OrderRow = {
+  id: string;
+  orderNumber: string;
+  createdAt: any;
+  status: string | null;
+  paymentStatus: string | null;
+  totalAmount: any;
+};
+
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
@@ -26,7 +35,7 @@ export async function GET(request: NextRequest) {
         ? sql`(${row.userId} = ${session.user.id} OR ${row.customerEmail} = ${session.user.email}) AND ${row.status} = ${status}`
         : sql`(${row.userId} = ${session.user.id} OR ${row.customerEmail} = ${session.user.email})`;
 
-    const orders = await db
+    const orders: OrderRow[] = await db
       .select()
       .from(schema.orders)
       .where(where(schema.orders) as any)

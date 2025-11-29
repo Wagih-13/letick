@@ -6,7 +6,6 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
-  swcMinify: true, // Explicitly enable SWC minification for faster builds
 
   // إعدادات تحسين الصور
   images: {

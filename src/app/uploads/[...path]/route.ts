@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
@@ -15,13 +15,13 @@ function guessContentType(p: string) {
 }
 
 export async function GET(
-  request: Request,
-  context: { params: Promise<{ path: string[] }> }
+  _req: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
-    const params = await context.params;
-    const parts = Array.isArray(params.path) ? params.path : [];
-    const relPath = parts.join("/");
+    const { path: parts } = await params;
+    const partsArr = Array.isArray(parts) ? parts : [];
+    const relPath = partsArr.join("/");
 
     const baseDir = path.join(process.cwd(), "public", "uploads");
     const candidate = path.join(baseDir, relPath);

@@ -15,11 +15,19 @@ function fmtMs(ms: number) {
   return `${days.toFixed(1)}d`;
 }
 
+type ReportRow = {
+  id: unknown;
+  status: string | null;
+  priority: unknown;
+  createdAt: unknown;
+  respondedAt: unknown;
+};
+
 export default async function SupportReportsPage() {
   const since30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
   const since14 = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
 
-  const rows = await db
+  const rows: ReportRow[] = await db
     .select({
       id: schema.contactMessages.id,
       status: schema.contactMessages.status,

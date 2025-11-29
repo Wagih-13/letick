@@ -31,6 +31,14 @@ export default async function MessageDetailPage({ params }: { params: Promise<{ 
 
   if (!msg) return notFound();
 
+  type StaffRow = {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    email: string;
+    role: string;
+  };
+
   const staffRows = await db
     .select({ id: schema.users.id, firstName: schema.users.firstName, lastName: schema.users.lastName, email: schema.users.email, role: schema.roles.slug })
     .from(schema.users)
@@ -39,8 +47,8 @@ export default async function MessageDetailPage({ params }: { params: Promise<{ 
     .where(sql`${schema.roles.slug} IN ${["admin", "super_admin"]}`)
     .limit(200);
   const seen = new Set<string>();
-  const staff = staffRows.filter((r) => (seen.has(r.id) ? false : (seen.add(r.id), true)));
-  const userOptions = staff.map((u) => ({ id: u.id, label: `${[u.firstName, u.lastName].filter(Boolean).join(" ") || u.email} <${u.email}>` }));
+  const staff = (staffRows as StaffRow[]).filter((r: StaffRow) => (seen.has(r.id) ? false : (seen.add(r.id), true)));
+  const userOptions = staff.map((u: StaffRow) => ({ id: u.id, label: `${[u.firstName, u.lastName].filter(Boolean).join(" ") || u.email} <${u.email}>` }));
 
   return (
     <div className="space-y-6">

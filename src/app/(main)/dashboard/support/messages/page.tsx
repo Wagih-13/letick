@@ -30,6 +30,17 @@ export default async function ContactMessagesPage({ searchParams }: { searchPara
     .orderBy(desc(schema.contactMessages.createdAt))
     .limit(100);
 
+  type Row = {
+    id: string;
+    name: string | null;
+    email: string;
+    subject: string | null;
+    status: string;
+    priority: string;
+    createdAt: Date;
+    respondedAt: Date | null;
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -65,7 +76,7 @@ export default async function ContactMessagesPage({ searchParams }: { searchPara
             </tr>
           </thead>
           <tbody>
-            {items.map((r) => (
+            {(items as Row[]).map((r: Row) => (
               <tr key={r.id} className="border-t">
                 <td className="px-3 py-2 font-medium">
                   <Link href={`/dashboard/support/messages/${r.id}`}>{r.subject || "(no subject)"}</Link>

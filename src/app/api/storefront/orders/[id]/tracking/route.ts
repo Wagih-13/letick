@@ -5,6 +5,19 @@ import { eq, inArray, desc } from "drizzle-orm";
 
 export const runtime = "nodejs";
 
+type ShipmentRow = {
+  id: string;
+  status: string | null;
+  trackingNumber: string | null;
+  carrier: string | null;
+  shippedAt: any;
+  estimatedDeliveryAt: any;
+  deliveredAt: any;
+  methodId: string | null;
+  methodName: string | null;
+  methodPrice: any;
+};
+
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
@@ -20,7 +33,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     const orderId = order[0].id;
 
     // Load shipments with method info
-    const shipments = await db
+    const shipments: ShipmentRow[] = await db
       .select({
         id: schema.shipments.id,
         status: schema.shipments.status,

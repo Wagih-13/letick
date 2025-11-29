@@ -6,7 +6,17 @@ import { sql } from "drizzle-orm";
 export async function GET() {
   try {
     const now = new Date();
-    const rows = await db
+    type DiscountRow = {
+      id: string;
+      name: string | null;
+      type: string | null;
+      value: any;
+      scope: string | null;
+      startsAt: any;
+      endsAt: any;
+      metadata: any;
+    };
+    const rows: DiscountRow[] = await db
       .select({
         id: schema.discounts.id,
         name: schema.discounts.name,
@@ -27,14 +37,14 @@ export async function GET() {
     let productMap: Record<string, string[]> = {};
     let categoryMap: Record<string, string[]> = {};
     if (ids.length) {
-      const prodRows = await db
+      const prodRows: { did: string; pid: string }[] = await db
         .select({ did: schema.discountProducts.discountId, pid: schema.discountProducts.productId })
         .from(schema.discountProducts)
         .where(sql`${schema.discountProducts.discountId} in ${ids}`);
       for (const r of prodRows) {
         (productMap[r.did] ||= []).push(r.pid);
       }
-      const catRows = await db
+      const catRows: { did: string; cid: string }[] = await db
         .select({ did: schema.discountCategories.discountId, cid: schema.discountCategories.categoryId })
         .from(schema.discountCategories)
         .where(sql`${schema.discountCategories.discountId} in ${ids}`);
