@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/shared/db";
 import * as schema from "@/shared/db/schema";
-import { and, desc, eq, inArray, or } from "drizzle-orm";
+import { and, desc, eq, inArray, or, sql } from "drizzle-orm";
 
 type OrderItemRow = {
   id: string;
@@ -37,29 +37,40 @@ export const runtime = "nodejs";
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ success: false, error: { message: "Unauthorized" } }, { status: 401 });
-    }
-
     const { id } = await params;
 
-    // Resolve order by orderNumber first, then by UUID id, and ensure it belongs to the user
-    let orders = await db
-      .select()
-      .from(schema.orders)
-      .where(and(eq(schema.orders.userId, session.user.id as any), eq(schema.orders.orderNumber, id)))
-      .limit(1);
-    if (orders.length === 0) {
-      orders = await db
+    let order;
+
+    if (session?.user?.id) {
+      // Authenticated: Resolve by orderNumber or UUID, must belong to user
+      const orders = await db
         .select()
         .from(schema.orders)
-        .where(and(eq(schema.orders.userId, session.user.id as any), eq(schema.orders.id, id as any)))
+        .where(
+          and(
+            eq(schema.orders.userId, session.user.id as any),
+            or(eq(schema.orders.orderNumber, id), eq(schema.orders.id, id as any))
+          )
+        )
         .limit(1);
+      order = orders[0];
+    } else {
+      // Guest: Resolve by UUID ONLY (to prevent enumeration), must be guest order (userId is null)
+      // Validate UUID format to prevent SQL errors if id is not a UUID
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      if (isUuid) {
+        const orders = await db
+          .select()
+          .from(schema.orders)
+          .where(and(eq(schema.orders.id, id as any), sql`${schema.orders.userId} IS NULL`))
+          .limit(1);
+        order = orders[0];
+      }
     }
-    if (orders.length === 0) {
+
+    if (!order) {
       return NextResponse.json({ success: false, error: { message: "Order not found" } }, { status: 404 });
     }
-    const order = orders[0];
 
     // Load items with images
     const items: OrderItemRow[] = await db
@@ -105,11 +116,15 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       .where(eq(schema.shipments.orderId, order.id as any));
 
     // Best-effort shipping address: fallback to user's default address
-    const [address] = await db
-      .select()
-      .from(schema.shippingAddresses)
-      .where(and(eq(schema.shippingAddresses.userId, session.user.id as any), eq(schema.shippingAddresses.isDefault, true)))
-      .limit(1);
+    let address: any = null;
+    if (session?.user?.id) {
+      const [addr] = await db
+        .select()
+        .from(schema.shippingAddresses)
+        .where(and(eq(schema.shippingAddresses.userId, session.user.id as any), eq(schema.shippingAddresses.isDefault, true)))
+        .limit(1);
+      address = addr;
+    }
 
     const payload = {
       id: order.id,
@@ -148,15 +163,15 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       })),
       shippingAddress: address
         ? {
-            name: `${address.firstName} ${address.lastName}`.trim(),
-            addressLine1: address.addressLine1,
-            addressLine2: address.addressLine2,
-            city: address.city,
-            state: address.state,
-            postalCode: address.postalCode,
-            country: address.country,
-            phone: address.phone,
-          }
+          name: `${address.firstName} ${address.lastName}`.trim(),
+          addressLine1: address.addressLine1,
+          addressLine2: address.addressLine2,
+          city: address.city,
+          state: address.state,
+          postalCode: address.postalCode,
+          country: address.country,
+          phone: address.phone,
+        }
         : null,
     };
 

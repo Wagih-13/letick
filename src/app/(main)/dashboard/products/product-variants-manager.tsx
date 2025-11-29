@@ -49,12 +49,14 @@ export function ProductVariantsManager({ productId, open, onOpenChange, draftMod
       { accessorKey: "name", header: "Name", cell: ({ row }) => <span>{row.original.name || ""}</span> },
       { accessorKey: "price", header: "Price", cell: ({ row }) => <span>${row.original.price}</span> },
       { accessorKey: "stockQuantity", header: "Stock", cell: ({ row }) => <span>{row.original.stockQuantity}</span> },
-      { accessorKey: "options", header: "Options", cell: ({ row }) => {
-        const opts = row.original.options || {};
-        const size = (opts as any).size;
-        const color = (opts as any).color;
-        return <span className="text-sm text-muted-foreground">{[color && `color: ${color}`, size && `size: ${size}`].filter(Boolean).join(", ") || "—"}</span>;
-      } },
+      {
+        accessorKey: "options", header: "Options", cell: ({ row }) => {
+          const opts = row.original.options || {};
+          const size = (opts as any).size;
+          const color = (opts as any).color;
+          return <span className="text-sm text-muted-foreground">{[color && `color: ${color}`, size && `size: ${size}`].filter(Boolean).join(", ") || "—"}</span>;
+        }
+      },
       { accessorKey: "isActive", header: "Active", cell: ({ row }) => <span>{row.original.isActive ? "Yes" : "No"}</span> },
       {
         id: "actions",

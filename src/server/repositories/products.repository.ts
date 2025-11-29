@@ -47,6 +47,12 @@ export class ProductsRepository {
     )`;
 
     const onSale = sql<boolean>`(${schema.products.compareAtPrice} is not null and ${schema.products.compareAtPrice} > ${schema.products.price})`;
+    const quantity = sql<number>`(
+      select coalesce(sum(${schema.inventory.availableQuantity}), 0)
+      from ${schema.inventory}
+      where ${schema.inventory.productId} = ${schema.products.id}
+    )`;
+
     const items = await db
       .select({
         id: schema.products.id,
@@ -65,20 +71,19 @@ export class ProductsRepository {
         updatedAt: schema.products.updatedAt,
         primaryImageUrl,
         categoryNames: sql<string[]>`coalesce(array_agg(distinct ${schema.categories.name}) filter (where ${schema.categories.id} is not null), '{}')`,
-        quantity: sql<number>`coalesce(sum(${schema.inventory.availableQuantity})::int, 0)`,
+        quantity,
       })
       .from(schema.products)
       .leftJoin(schema.productCategories, eq(schema.productCategories.productId, schema.products.id))
       .leftJoin(schema.categories, eq(schema.categories.id, schema.productCategories.categoryId))
-      .leftJoin(schema.inventory, eq(schema.inventory.productId, schema.products.id))
       .where(where as any)
       .groupBy(
         schema.products.id,
         schema.products.name,
         schema.products.slug,
         schema.products.sku,
-        schema.products.compareAtPrice,
         schema.products.price,
+        schema.products.compareAtPrice,
         schema.products.status,
         schema.products.stockStatus,
         schema.products.isFeatured,
@@ -130,6 +135,7 @@ export class ProductsRepository {
         schema.products.description,
         schema.products.shortDescription,
         schema.products.price,
+        schema.products.compareAtPrice,
         schema.products.status,
         schema.products.stockStatus,
         schema.products.trackInventory,

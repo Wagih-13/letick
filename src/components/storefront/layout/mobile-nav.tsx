@@ -4,6 +4,7 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useSession } from "next-auth/react";
 
 interface MobileNavProps {
   open: boolean;
@@ -11,6 +12,8 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ open, onClose }: MobileNavProps) {
+  const { data: session } = useSession();
+
   const navLinks = [
     { href: "/shop", label: "Shop All" },
     { href: "/shop/new", label: "New Arrivals" },
@@ -44,29 +47,32 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
               {link.label}
             </Link>
           ))}
-          <div className="border-t pt-3 mt-3">
-            <Link
-              href="/account"
-              onClick={onClose}
-              className="text-base sm:text-lg font-medium transition-colors hover:text-primary block px-3 py-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-            >
-              My Account
-            </Link>
-            <Link
-              href="/account/orders"
-              onClick={onClose}
-              className="text-sm sm:text-base text-muted-foreground transition-colors hover:text-primary block mt-1 px-3 py-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-            >
-              Orders
-            </Link>
-            <Link
-              href="/account/wishlist"
-              onClick={onClose}
-              className="text-sm sm:text-base text-muted-foreground transition-colors hover:text-primary block mt-1 px-3 py-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-            >
-              Wishlist
-            </Link>
-          </div>
+
+          {session?.user && (
+            <div className="border-t pt-3 mt-3">
+              <Link
+                href="/account"
+                onClick={onClose}
+                className="text-base sm:text-lg font-medium transition-colors hover:text-primary block px-3 py-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              >
+                My Account
+              </Link>
+              <Link
+                href="/account/orders"
+                onClick={onClose}
+                className="text-sm sm:text-base text-muted-foreground transition-colors hover:text-primary block mt-1 px-3 py-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              >
+                Orders
+              </Link>
+              <Link
+                href="/account/wishlist"
+                onClick={onClose}
+                className="text-sm sm:text-base text-muted-foreground transition-colors hover:text-primary block mt-1 px-3 py-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              >
+                Wishlist
+              </Link>
+            </div>
+          )}
         </nav>
       </SheetContent>
     </Sheet>

@@ -88,7 +88,7 @@ export function ProductTabs({ product }: ProductTabsProps) {
             <div>
               <h3 className="font-semibold mb-1">Free Shipping</h3>
               <p className="text-sm text-muted-foreground">
-                Free standard shipping on orders over $50. Expedited shipping
+                Free standard shipping on orders over 3500. Expedited shipping
                 available at checkout.
               </p>
             </div>
@@ -98,7 +98,7 @@ export function ProductTabs({ product }: ProductTabsProps) {
             <div>
               <h3 className="font-semibold mb-1">Easy Returns</h3>
               <p className="text-sm text-muted-foreground">
-                30-day return policy. Items must be in original condition with
+                14-day return policy. Items must be in original condition with
                 tags attached.
               </p>
             </div>
