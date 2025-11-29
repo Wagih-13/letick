@@ -110,7 +110,11 @@ export function ProductCard({ product, className, onQuickView }: ProductCardProp
       {/* Image Container */}
       <div className="relative aspect-[4/5] overflow-hidden rounded-t-lg bg-muted">
         <Image
-          src={product.primaryImage}
+          src={
+            product.primaryImage && product.primaryImage.startsWith("http")
+              ? product.primaryImage
+              : "/placeholder-product.svg"
+          }
           alt={product.name}
           fill
           className={cn(

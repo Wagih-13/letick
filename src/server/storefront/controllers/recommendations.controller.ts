@@ -12,11 +12,11 @@ export class RecommendationsController {
   static async list(request: NextRequest) {
     try {
       const { searchParams } = new URL(request.url);
-      const context = (searchParams.get("context") || "cart").toLowerCase();
-      const limit = Math.min(12, Math.max(1, parseInt(searchParams.get("limit") || "6")));
+      const context = (searchParams.get("context") ?? "cart").toLowerCase();
+      const limit = Math.min(12, Math.max(1, parseInt(searchParams.get("limit") ?? "6")));
 
       if (context === "product") {
-        const productId = searchParams.get("productId") || undefined;
+        const productId = searchParams.get("productId") ?? undefined;
         if (!productId) {
           return NextResponse.json(
             { success: false, error: { message: "productId is required for product context", code: "BAD_REQUEST" } },

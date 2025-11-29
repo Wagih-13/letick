@@ -15,7 +15,7 @@ function guessContentType(p: string) {
 }
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
@@ -45,19 +45,22 @@ export async function GET(
     }
 
     // Fallback to remote origin (use NEXT_PUBLIC_APP_URL if provided)
-    const base = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
-    const remoteUrl = `${base}/uploads/${relPath}`;
-    const resp = await fetch(remoteUrl);
-    if (resp.ok && resp.body) {
-      // Stream remote with caching
-      const contentType = resp.headers.get("content-type") ?? guessContentType(remoteUrl);
-      return new Response(resp.body, {
-        status: 200,
-        headers: {
-          "Content-Type": contentType,
-          "Cache-Control": "public, max-age=31536000, immutable",
-        },
-      });
+    const currentOrigin = req.nextUrl.origin.replace(/\/$/, "");
+    const fallbackBase = (process.env.NEXT_PUBLIC_UPLOADS_ORIGIN || "").replace(/\/$/, "");
+    if (fallbackBase && fallbackBase !== currentOrigin) {
+      const remoteUrl = `${fallbackBase}/uploads/${relPath}`;
+      const resp = await fetch(remoteUrl);
+      if (resp.ok && resp.body) {
+        // Stream remote with caching
+        const contentType = resp.headers.get("content-type") ?? guessContentType(remoteUrl);
+        return new Response(resp.body, {
+          status: 200,
+          headers: {
+            "Content-Type": contentType,
+            "Cache-Control": "public, max-age=31536000, immutable",
+          },
+        });
+      }
     }
 
     return NextResponse.json({ success: false, error: { message: "Not found" } }, { status: 404 });
@@ -65,3 +68,4 @@ export async function GET(
     return NextResponse.json({ success: false, error: { message: "Failed" } }, { status: 500 });
   }
 }
+

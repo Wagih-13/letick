@@ -106,7 +106,8 @@ export class StorefrontCategoriesRepository {
       .groupBy(
         schema.categories.id,
         schema.categories.name,
-        schema.categories.slug
+        schema.categories.slug,
+        schema.categories.sortOrder
       )
       .orderBy(schema.categories.sortOrder, schema.categories.name);
 
@@ -145,7 +146,8 @@ export class StorefrontCategoriesRepository {
         schema.categories.name,
         schema.categories.slug,
         schema.categories.description,
-        schema.categories.image
+        schema.categories.image,
+        schema.categories.sortOrder
       )
       .orderBy(schema.categories.sortOrder, schema.categories.name)
       .limit(limit);

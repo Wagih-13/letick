@@ -8,45 +8,35 @@ import * as schema from "./schema";
 dotenv.config();
 const g = globalThis as any;
 
-// Create PostgreSQL connection pool
-const hasConnStr = !!process.env.DATABASE_URL;
-const preferHostConfig = String(process.env.DB_FORCE_HOST_CONFIG || process.env.DB_PREFER_HOST_CONFIG || "").toLowerCase() === "true";
-const sslEnv = String(process.env.DB_SSL || process.env.PGSSLMODE || "").toLowerCase();
-const sslRequired = sslEnv === "true" || sslEnv === "require" || (process.env.DATABASE_URL?.includes("sslmode=require") ?? false);
+// TEMPORARY: Hardcoded connection for debugging
+// eslint-disable-next-line no-underscore-dangle, @typescript-eslint/no-explicit-any
+const pool = g.__pgPool ?? new Pool({
+  host: "46.202.143.88",
+  port: 5432,
+  user: "vercel_modestwear",
+  password: "S8v#Q2r!X5u^L9p@F1z",
+  database: "modestwear_db",
+  max: 30,
+  idleTimeoutMillis: 60000,
+  connectionTimeoutMillis: 10000,
+  statement_timeout: 30000,
+  keepAlive: true,
+  application_name: "modestwear-app",
+  ssl: false,
+});
 
-const pool = g.__pgPool ?? new Pool(
-  hasConnStr && !preferHostConfig
-    ? {
-      connectionString: process.env.DATABASE_URL,
-      max: 30, // Increased from 20 for better concurrency
-      idleTimeoutMillis: 60000, // Increased to 60s for better connection reuse
-      connectionTimeoutMillis: 10000,
-      statement_timeout: 30000, // 30s query timeout
-      keepAlive: true,
-      application_name: process.env.PG_APP_NAME || "modestwear-app",
-      ssl: sslRequired ? { rejectUnauthorized: false } : false,
-    }
-    : {
-      host: process.env.DB_HOST || "46.202.143.88",
-      port: Number(process.env.DB_PORT) || 5432,
-      user: process.env.DB_USER || "vercel_modestwear",
-      password: process.env.DB_PASSWORD || "G!9r@T7m#Q2^wK8$Z1p*L4f%X5u",
-      database: process.env.DB_NAME || "modestwear_db",
-      max: 30, // Increased from 20 for better concurrency
-      idleTimeoutMillis: 60000, // Increased to 60s for better connection reuse
-      connectionTimeoutMillis: 10000,
-      statement_timeout: 30000, // 30s query timeout
-      keepAlive: true,
-      application_name: process.env.PG_APP_NAME || "modestwear-app",
-      ssl: sslRequired ? { rejectUnauthorized: false } : false,
-    },
-);
-
-if (process.env.NODE_ENV !== "production") g.__pgPool = pool;
+if (process.env.NODE_ENV !== "production") {
+  // eslint-disable-next-line no-underscore-dangle
+  g.__pgPool = pool;
+}
 
 // Initialize Drizzle instance
+// eslint-disable-next-line no-underscore-dangle
 const _db = g.__drizzleDb ?? drizzle(pool, { schema });
-if (process.env.NODE_ENV !== "production") g.__drizzleDb = _db;
+if (process.env.NODE_ENV !== "production") {
+  // eslint-disable-next-line no-underscore-dangle
+  g.__drizzleDb = _db;
+}
 export const db = _db;
 
 // Export schema for use in queries

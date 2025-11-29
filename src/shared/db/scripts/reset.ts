@@ -5,11 +5,11 @@ dotenv.config();
 
 async function resetDatabase() {
   const client = new Client({
-    host: process.env.DB_HOST || "46.202.143.88",
-    port: Number(process.env.DB_PORT) || 5432,
-    user: process.env.DB_USER || "vercel_modestwear",
-    password: process.env.DB_PASSWORD || "G!9r@T7m#Q2^wK8$Z1p*L4f%X5u",
-    database: process.env.DB_NAME || "modestwear_db",
+    host: process.env.DB_HOST ?? "46.202.143.88",
+    port: parseInt(process.env.DB_PORT ?? "5432"),
+    user: process.env.DB_USER ?? "vercel_modestwear",
+    password: process.env.DB_PASSWORD ?? "S8v#Q2r!X5u^L9p@F1z",
+    database: process.env.DB_NAME ?? "modestwear_db",
 
   });
 
@@ -17,7 +17,7 @@ async function resetDatabase() {
     await client.connect();
     console.log("✅ Connected to PostgreSQL");
 
-    const dbName = process.env.DB_NAME || "modestwear_db";
+    const dbName = process.env.DB_NAME ?? "modestwear_db";
 
     console.log("🔄 Resetting database...");
 

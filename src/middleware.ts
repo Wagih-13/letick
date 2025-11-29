@@ -38,10 +38,15 @@ export default async function middleware(req: NextRequest) {
   // 2) Optional admin subdomain support: admin.yourdomain.com -> /dashboard
   const host = req.headers.get("host") || "";
   const adminSub = siteConfig.adminSubdomain;
-  const isAdminSubdomain = host.startsWith(`${adminSub}.`);
-  if (isAdminSubdomain) {
-    // Ensure all admin-subdomain requests resolve under /dashboard
-    if (!nextUrl.pathname.startsWith("/dashboard")) {
+  const isAdminSubdomain = adminSub && host.startsWith(`${adminSub}.`);
+  
+  if (isAdminSubdomain && !nextUrl.pathname.startsWith("/dashboard")) {
+    // ✅ FIX: منع الـ loop - تأكد إن مش static files أو api
+    if (
+      !nextUrl.pathname.startsWith("/_next") &&
+      !nextUrl.pathname.startsWith("/static") &&
+      !nextUrl.pathname.includes(".")
+    ) {
       const url = new URL(`/dashboard${nextUrl.pathname}`, nextUrl);
       url.search = nextUrl.search;
       return NextResponse.rewrite(url);
@@ -55,14 +60,19 @@ export default async function middleware(req: NextRequest) {
 
     if (!session?.user) {
       const redirectUrl = new URL(login, nextUrl);
-      redirectUrl.searchParams.set("callbackUrl", nextUrl.toString());
+      redirectUrl.searchParams.set("callbackUrl", nextUrl.pathname);
       return NextResponse.redirect(redirectUrl);
     }
 
     const roles = ((session.user as any)?.roles as string[] | undefined) ?? [];
     const isAdmin = roles.includes("admin") || roles.includes("super_admin");
+    
     if (!isAdmin) {
-      return NextResponse.redirect(new URL("/", nextUrl));
+      // ✅ FIX: منع redirect loop - تأكد مش راجع لنفس الصفحة
+      const homeUrl = new URL("/", nextUrl);
+      if (nextUrl.pathname !== "/") {
+        return NextResponse.redirect(homeUrl);
+      }
     }
   }
 
