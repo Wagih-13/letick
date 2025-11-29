@@ -1,22 +1,22 @@
-import { Client } from "pg";
 import * as dotenv from "dotenv";
+import { Client } from "pg";
 
 dotenv.config();
 
 async function createDatabase() {
   const client = new Client({
-    host: process.env.DB_HOST || "46.202.143.88",
+    host: process.env.DB_HOST ?? "46.202.143.88",
     port: Number(process.env.DB_PORT) || 5432,
-    user: process.env.DB_USER || "vercel_modestwear",
-    password: process.env.DB_PASSWORD || "G!9r@T7m#Q2^wK8$Z1p*L4f%X5u",
-    database: process.env.DB_NAME || "modestwear_db",
+    user: process.env.DB_USER ?? "vercel_modestwear",
+    password: process.env.DB_PASSWORD ?? "'G!9r@T7m#Q2^wK8$Z1p*L4f%X5u'",
+    database: process.env.DB_NAME ?? "modestwear_db",
   });
 
   try {
     await client.connect();
     console.log("✅ Connected to PostgreSQL");
 
-    const dbName = process.env.DB_NAME || "modestwear_db";
+    const dbName = process.env.DB_NAME ?? "modestwear_db";
 
     // Check if database exists
     const res = await client.query(`SELECT 1 FROM pg_database WHERE datname = $1`, [dbName]);
@@ -44,4 +44,3 @@ createDatabase()
     console.error("❌ Database setup failed:", error);
     process.exit(1);
   });
-

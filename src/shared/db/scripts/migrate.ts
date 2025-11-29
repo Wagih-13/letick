@@ -1,17 +1,17 @@
+import * as dotenv from "dotenv";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { Pool } from "pg";
-import * as dotenv from "dotenv";
 
 dotenv.config();
 
 async function runMigrations() {
   const pool = new Pool({
-    host: process.env.DB_HOST || "46.202.143.88",
+    host: process.env.DB_HOST ?? "46.202.143.88",
     port: Number(process.env.DB_PORT) || 5432,
-    user: process.env.DB_USER || "vercel_modestwear",
-    password: process.env.DB_PASSWORD || "G!9r@T7m#Q2^wK8$Z1p*L4f%X5u",
-    database: process.env.DB_NAME || "modestwear_db",
+    user: process.env.DB_USER ?? "vercel_modestwear",
+    password: process.env.DB_PASSWORD ?? "'G!9r@T7m#Q2^wK8$Z1p*L4f%X5u'",
+    database: process.env.DB_NAME ?? "modestwear_db",
   });
 
   const db = drizzle(pool);
@@ -37,4 +37,3 @@ runMigrations()
     console.error("❌ Migration process failed:", error);
     process.exit(1);
   });
-

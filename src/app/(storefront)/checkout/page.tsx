@@ -1,26 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCartStore } from "@/stores/cart.store";
-import { CheckoutStepper } from "@/components/storefront/organisms/checkout-stepper";
-import { ShippingForm } from "@/components/storefront/organisms/shipping-form";
-import { ShippingMethodSelector } from "@/components/storefront/organisms/shipping-method-selector";
-import { PaymentForm } from "@/components/storefront/organisms/payment-form";
-import { OrderReview } from "@/components/storefront/organisms/order-review";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import Link from "next/link";
+
+import { CheckoutStepper } from "@/components/storefront/organisms/checkout-stepper";
+import { OrderReview } from "@/components/storefront/organisms/order-review";
+import { PaymentForm } from "@/components/storefront/organisms/payment-form";
+import { ShippingForm } from "@/components/storefront/organisms/shipping-form";
+import { ShippingMethodSelector } from "@/components/storefront/organisms/shipping-method-selector";
 import { useCurrency } from "@/components/storefront/providers/currency-provider";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useCartStore } from "@/stores/cart.store";
 
 type CheckoutStep = "shipping" | "shipping-method" | "payment" | "review";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const isBuyNow = (searchParams.get("mode") || "") === "buy-now";
+  const isBuyNow = (searchParams.get("mode") ?? "") === "buy-now";
   const cart = useCartStore((state) => (isBuyNow ? state.buyNowCart : state.cart));
   const fetchCart = useCartStore((state) => state.fetchCart);
   const [currentStep, setCurrentStep] = useState<CheckoutStep>("shipping");
@@ -29,7 +32,6 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<any>({ type: "cash_on_delivery" });
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const { format } = useCurrency();
-  
 
   useEffect(() => {
     fetchCart({ mode: isBuyNow ? "buy-now" : "normal" });
@@ -47,7 +49,7 @@ export default function CheckoutPage() {
 
         const addrJson = addrRes.ok ? await addrRes.json() : null;
         const profileJson = profileRes.ok ? await profileRes.json() : null;
-        const email: string | undefined = profileJson?.data?.email || addrJson?.data?.email;
+        const email: string | undefined = profileJson?.data?.email ?? addrJson?.data?.email;
 
         if (!cancelled) {
           if (addrJson?.success && addrJson.data) {
@@ -65,8 +67,6 @@ export default function CheckoutPage() {
       cancelled = true;
     };
   }, []);
-
-  
 
   // Redirect if cart is empty
   useEffect(() => {
@@ -101,16 +101,16 @@ export default function CheckoutPage() {
     try {
       const method = shippingMethod
         ? {
-            id: String(shippingMethod.id),
-            name: String(shippingMethod.name),
-            price: Number(shippingMethod.price) || 0,
-            description: shippingMethod.description ?? undefined,
-            estimatedDays:
-              shippingMethod.estimatedDays !== undefined && shippingMethod.estimatedDays !== null
-                ? Number(shippingMethod.estimatedDays)
-                : undefined,
-            carrier: shippingMethod.carrier ?? undefined,
-          }
+          id: String(shippingMethod.id),
+          name: String(shippingMethod.name),
+          price: Number(shippingMethod.price) || 0,
+          description: shippingMethod.description ?? undefined,
+          estimatedDays:
+            shippingMethod.estimatedDays !== undefined && shippingMethod.estimatedDays !== null
+              ? Number(shippingMethod.estimatedDays)
+              : undefined,
+          carrier: shippingMethod.carrier ?? undefined,
+        }
         : null;
 
       const res = await fetch("/api/storefront/orders", {
@@ -126,9 +126,12 @@ export default function CheckoutPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        const serverMsg = data?.error?.message || "Failed to place order";
+        const serverMsg = data?.error?.message ?? "Failed to place order";
         const details = Array.isArray(data?.error?.details)
-          ? data.error.details.map((d: any) => d?.message).filter(Boolean).join("; ")
+          ? data.error.details
+            .map((d: any) => d?.message)
+            .filter(Boolean)
+            .join("; ")
           : undefined;
         throw new Error(details ? `${serverMsg}: ${details}` : serverMsg);
       }
@@ -138,9 +141,9 @@ export default function CheckoutPage() {
         try {
           await fetch("/api/storefront/buy-now/restore", { method: "POST" });
           await fetchCart();
-        } catch {}
+        } catch { /* ignore */ }
       }
-      const orderNumber = data.data?.orderNumber || data.data?.id;
+      const orderNumber = data.data?.orderNumber ?? data.data?.id;
       toast.success("Order placed successfully");
       router.push(`/order/${orderNumber}`);
     } catch (error) {
@@ -153,14 +156,14 @@ export default function CheckoutPage() {
 
   if (!cart) {
     return (
-      <div className="container py-16 flex justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="container flex justify-center py-16">
+        <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   // Compute shipping and total based on selected method price only
-  const effectiveShippingAmount = shippingMethod ? (Number(shippingMethod.price) || 0) : 0;
+  const effectiveShippingAmount = shippingMethod ? Number(shippingMethod.price) || 0 : 0;
   const computedTotal = cart.totalAmount + (shippingMethod ? effectiveShippingAmount : 0);
 
   return (
@@ -169,14 +172,14 @@ export default function CheckoutPage() {
       <div className="mb-8">
         <Link
           href="/cart"
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
+          className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center text-sm"
           onClick={async (e) => {
             if (!isBuyNow) return;
             e.preventDefault();
             try {
               await fetch("/api/storefront/buy-now/restore", { method: "POST" });
               await fetchCart();
-            } catch {}
+            } catch { /* ignore */ }
             router.push("/cart");
           }}
         >
@@ -190,7 +193,7 @@ export default function CheckoutPage() {
       </div>
 
       {/* Mobile sticky footer actions */}
-      <div className="sm:hidden" aria-hidden>
+      {/* <div className="sm:hidden" aria-hidden>
         <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
             <span>Step {currentStepIndex + 1} of {steps.length}</span>
@@ -203,19 +206,19 @@ export default function CheckoutPage() {
             </Button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Stepper */}
       <div className="hidden sm:block">
         <CheckoutStepper steps={steps} currentStep={currentStep} />
       </div>
       {/* Compact mobile step indicator */}
-      <div className="sm:hidden text-xs text-muted-foreground">
+      <div className="text-muted-foreground text-xs sm:hidden">
         Step {currentStepIndex + 1} of {steps.length}: {steps[currentStepIndex].label}
       </div>
 
       {/* Checkout Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8 pb-28 sm:pb-0">
+      <div className="mt-8 grid grid-cols-1 gap-8 pb-28 sm:pb-0 lg:grid-cols-3">
         {/* Form Area */}
         <div className="lg:col-span-2">
           {currentStep === "shipping" && (
@@ -231,7 +234,9 @@ export default function CheckoutPage() {
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify(data),
                     });
-                  } catch {}
+                  } catch {
+                    // Ignore errors when saving shipping address
+                  }
                 })();
                 handleNext();
               }}
@@ -275,13 +280,11 @@ export default function CheckoutPage() {
 
         {/* Order Summary Sidebar */}
         <div>
-          <div className="border rounded-lg p-6 sticky top-4">
-            <h2 className="font-semibold mb-4">Order Summary</h2>
+          <div className="sticky top-4 rounded-lg border p-6">
+            <h2 className="mb-4 font-semibold">Order Summary</h2>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">
-                  Items ({cart.itemCount})
-                </span>
+                <span className="text-muted-foreground">Items ({cart.itemCount})</span>
                 <span>{format(cart.subtotal, { codeOverride: cart.currency })}</span>
               </div>
               {cart.discountAmount > 0 && (
@@ -308,7 +311,7 @@ export default function CheckoutPage() {
                 <span className="text-muted-foreground">Tax</span>
                 <span>{format(cart.taxAmount, { codeOverride: cart.currency })}</span>
               </div>
-              <div className="border-t pt-3 flex justify-between font-semibold">
+              <div className="flex justify-between border-t pt-3 font-semibold">
                 <span>Total</span>
                 <span>{format(computedTotal, { codeOverride: cart.currency })}</span>
               </div>
