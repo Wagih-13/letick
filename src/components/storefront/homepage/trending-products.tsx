@@ -1,8 +1,9 @@
-import { ProductCardSkeleton } from "../atoms/product-card-skeleton";
-import { ProductGrid } from "../organisms/product-grid";
 import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { storefrontProductsService } from "@/server/storefront/services/products.service";
+
+import { ProductGrid } from "../organisms/product-grid";
 
 async function getTrendingProducts() {
   try {
@@ -24,18 +25,16 @@ export async function TrendingProducts() {
 
   return (
     <section className="py-16">
-      <div className="flex items-center justify-between mb-8">
+      <div className="mb-8 flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Trending Now</h2>
-          <p className="text-muted-foreground mt-2">
-            Most popular products this week
-          </p>
+          <p className="text-muted-foreground mt-2">Most popular products this week</p>
         </div>
         <Button asChild variant="outline">
           <Link href="/shop?sortBy=popular">View All</Link>
         </Button>
       </div>
-      <ProductGrid products={products} columns={4} />
+      <ProductGrid products={products} columns={3} />
     </section>
   );
 }
