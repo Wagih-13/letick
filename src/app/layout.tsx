@@ -41,7 +41,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     >
       <body className={`${inter.className} min-h-screen antialiased`} suppressHydrationWarning>
         {/* Meta Pixel */}
-        <Script id="fb-pixel" strategy="afterInteractive">
+        {/* <Script id="fb-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -54,7 +54,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             fbq('init', '1387388006122042');
             fbq('track', 'PageView');
           `}
-        </Script>
+        </Script> */}
         <Analytics />
         <SpeedInsights />
         <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
