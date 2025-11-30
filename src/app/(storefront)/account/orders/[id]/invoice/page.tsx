@@ -104,7 +104,7 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
           <div>
             <h3 className="mb-2 font-semibold">Seller</h3>
             <div className="text-sm leading-6">
-              <div>Modest Wear</div>
+              <div>Letick Store</div>
               <div>123 Commerce St.</div>
               <div>City, ST 12345</div>
               <div>United States</div>

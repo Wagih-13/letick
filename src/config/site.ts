@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Modest Wear",
+  name: "Letick Store",
   description: "Modern e‑commerce storefront and admin dashboard built with Next.js",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   adminSubdomain: process.env.NEXT_PUBLIC_ADMIN_SUBDOMAIN ?? "admin",

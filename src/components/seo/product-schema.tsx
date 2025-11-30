@@ -22,7 +22,7 @@ export function ProductSchema({
     description,
     image,
     sku,
-    brand = "Modest Wear",
+    brand = "Letick Store",
     price,
     currency = "EGP",
     availability = "InStock",

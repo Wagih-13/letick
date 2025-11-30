@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export function HeroSection() {
   return (
-    <section className="relative h-[90vh] min-h-[600px] w-full ">
+    <section className="relative min-h-[600px] w-full " style={{ height: "100vh" }}>
       {/* Background Image */}
       <div className="w-[100vw ] absolute inset-0"
         style={{ marginInline: "calc(50% - 50vw)" }}>

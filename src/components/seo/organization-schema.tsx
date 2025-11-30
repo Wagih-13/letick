@@ -10,7 +10,7 @@ interface OrganizationSchemaProps {
 }
 
 export function OrganizationSchema({
-    name = "Modest Wear",
+    name = "Letick Store",
     url = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
     logo = "/Storefront/images/logo%20(1).png",
     description = "Premium modest fashion and Islamic clothing online store offering elegant hijabs, abayas, modest dresses, and modern Islamic wear with worldwide delivery.",

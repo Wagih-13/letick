@@ -7,7 +7,7 @@ interface WebsiteSchemaProps {
 }
 
 export function WebsiteSchema({
-    name = "Modest Wear",
+    name = "Letick Store",
     url = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
     searchUrl,
 }: WebsiteSchemaProps) {

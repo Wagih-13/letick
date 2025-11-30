@@ -211,8 +211,8 @@ class EmailsService {
         </div>
 
         <div style="text-align: center; margin-top: 30px; color: #666; font-size: 12px;">
-          <p>This is an automated notification from MODEST WEAR Store</p>
-          <p style="margin: 5px 0;">© ${new Date().getFullYear()} MODEST WEAR. All rights reserved.</p>
+          <p>This is an automated notification from Letick Store</p>
+          <p style="margin: 5px 0;">© ${new Date().getFullYear()} Letick Store. All rights reserved.</p>
         </div>
       </body>
       </html>
@@ -229,7 +229,7 @@ class EmailsService {
 
       const html = this.getNewOrderEmailTemplate(orderData);
       const subject = `🛍️ New Order Received - ${orderData?.orderNumber || orderData?.orderId || "Order"}`;
-      const fromOverride = `"MODEST WEAR Store" <${process.env.EMAIL_USER || process.env.EMAIL_FROM || ""}>`;
+      const fromOverride = `"Letick Store" <${process.env.EMAIL_USER || process.env.EMAIL_FROM || ""}>`;
 
       const res = await this.send({ to, subject, html, fromOverride, metadata: { orderId: orderData?.orderId, orderNumber: orderData?.orderNumber } }, actor);
       return res;
