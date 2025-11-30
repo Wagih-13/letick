@@ -7,16 +7,16 @@ async function dropDatabase() {
   const client = new Client({
     host: process.env.DB_HOST ?? "46.202.143.88",
     port: Number(process.env.DB_PORT) || 5432,
-    user: process.env.DB_USER ?? "vercel_modestwear",
-    password: process.env.DB_PASSWORD ?? "'G!9r@T7m#Q2^wK8$Z1p*L4f%X5u'",
-    database: process.env.DB_NAME ?? "modestwear_db",
+    user: process.env.DB_USER ?? "verce_letick",
+    password: process.env.DB_PASSWORD ?? "'xK9#mP2$vL7@nQ4!wR8^zT6&'",
+    database: process.env.DB_NAME ?? "letick_db",
   });
 
   try {
     await client.connect();
     console.log("✅ Connected to PostgreSQL");
 
-    const dbName = process.env.DB_NAME ?? "modestwear_db";
+    const dbName = process.env.DB_NAME ?? "letick_db";
 
     // Terminate all connections to the database
     await client.query(

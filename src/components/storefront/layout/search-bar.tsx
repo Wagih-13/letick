@@ -10,9 +10,10 @@ import Image from "next/image";
 
 interface SearchBarProps {
   onClose?: () => void;
+  transparent?: boolean;
 }
 
-export function SearchBar({ onClose }: SearchBarProps) {
+export function SearchBar({ onClose, transparent }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, 250);
   const router = useRouter();
@@ -36,7 +37,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
       const raw = localStorage.getItem("recent-searches") || "[]";
       const arr = JSON.parse(raw);
       if (Array.isArray(arr)) setRecent(arr.slice(0, 8));
-    } catch {}
+    } catch { }
   }, []);
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
           if (data?.success) setSuggestions(data.data);
           setOpen(true);
           setActiveIndex(0);
-        } catch {}
+        } catch { }
         return;
       }
       try {
@@ -61,7 +62,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
         if (data?.success) setSuggestions(data.data);
         setOpen(true);
         setActiveIndex(0);
-      } catch {}
+      } catch { }
     };
     run();
     return () => controller.abort();
@@ -84,7 +85,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
     setOpen(false);
   }, [pathname]);
 
-  const items: Array<{ type: "product" | "category" | "recent" | "popular" | "see_all"; value: any }>= useMemo(() => {
+  const items: Array<{ type: "product" | "category" | "recent" | "popular" | "see_all"; value: any }> = useMemo(() => {
     const list: any[] = [];
     if (debouncedQuery.trim().length === 0) {
       // recent and popular when empty
@@ -145,7 +146,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
       const next = [q, ...arr.filter((x) => x.toLowerCase() !== q.toLowerCase())].slice(0, 8);
       localStorage.setItem("recent-searches", JSON.stringify(next));
       setRecent(next);
-    } catch {}
+    } catch { }
   };
 
   const trackAnalytics = async (event: string, payload: any) => {
@@ -156,7 +157,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
         body: JSON.stringify({ event, ...payload, ts: Date.now() }),
         keepalive: true,
       });
-    } catch {}
+    } catch { }
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -211,7 +212,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="relative w-full">
-      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Search className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${transparent ? "text-white/70" : "text-muted-foreground"}`} />
       <Input
         type="text"
         placeholder="Search for products..."
@@ -230,7 +231,10 @@ export function SearchBar({ onClose }: SearchBarProps) {
           }
           setOpen(false);
         }}
-        className="h-11 pl-9 pr-10 rounded-full bg-muted/60 border border-muted/60 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/70"
+        className={`h-11 pl-9 pr-10 rounded-full focus-visible:ring-0 focus-visible:ring-offset-0 ${transparent
+          ? "bg-white/10 border-white/20 text-white placeholder:text-white/70 hover:bg-white/20"
+          : "bg-muted/60 border-muted/60 placeholder:text-muted-foreground/70"
+          }`}
         aria-autocomplete="list"
         aria-expanded={open}
         aria-controls="search-suggestions"

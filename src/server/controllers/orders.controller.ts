@@ -85,6 +85,17 @@ export class OrdersController {
     }
   }
 
+  static async removeAll(request: NextRequest) {
+    try {
+      await requirePermission(request, "orders.delete");
+      const result = await ordersService.removeAll();
+      if (!result.success) return NextResponse.json({ success: false, error: result.error }, { status: 500 });
+      return successResponse(result.data);
+    } catch (e) {
+      return handleRouteError(e);
+    }
+  }
+
   static async metrics(request: NextRequest) {
     try {
       await requirePermission(request, "orders.view");

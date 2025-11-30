@@ -13,9 +13,9 @@ const g = globalThis as any;
 const pool = g.__pgPool ?? new Pool({
   host: "46.202.143.88",
   port: 5432,
-  user: "vercel_modestwear",
-  password: "S8v#Q2r!X5u^L9p@F1z",
-  database: "modestwear_db",
+  user: "verce_letick",
+  password: "xK9#mP2$vL7@nQ4!wR8^zT6&",
+  database: "letick_db",
   max: 30,
   idleTimeoutMillis: 60000,
   connectionTimeoutMillis: 10000,

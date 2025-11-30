@@ -9,9 +9,9 @@ async function runMigrations() {
   const pool = new Pool({
     host: process.env.DB_HOST ?? "46.202.143.88",
     port: Number(process.env.DB_PORT) || 5432,
-    user: process.env.DB_USER ?? "vercel_modestwear",
-    password: process.env.DB_PASSWORD ?? "'G!9r@T7m#Q2^wK8$Z1p*L4f%X5u'",
-    database: process.env.DB_NAME ?? "modestwear_db",
+    user: process.env.DB_USER ?? "verce_letick",
+    password: process.env.DB_PASSWORD ?? "'xK9#mP2$vL7@nQ4!wR8^zT6&'",
+    database: process.env.DB_NAME ?? "letick_db",
   });
 
   const db = drizzle(pool);

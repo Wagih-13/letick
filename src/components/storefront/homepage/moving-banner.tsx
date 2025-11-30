@@ -3,7 +3,7 @@
 import Image from "next/image";
 
 export default function MovingBanner({
-  text = "MODEST WEAR",
+  text = "Letick Store",
   speed = 40,
   includeLogo = true,
   logoSrc = "/Storefront/images/logo (1).png",
@@ -17,10 +17,10 @@ export default function MovingBanner({
 }) {
   return (
     <section
-      className="relative overflow-hidden border-y"
+      className=""
       style={{ marginInline: "calc(50% - 50vw)" }}
     >
-      <div  style={{backgroundColor:"lab(37 13.03 12.87)"}}>
+      <div style={{ backgroundColor: "black" }}>
         <div className="py-4 sm:py-5">
           <div className="flex items-center overflow-hidden whitespace-nowrap will-change-transform" aria-hidden>
             <Row text={text} speed={speed} offset={0} includeLogo={includeLogo} logoSrc={logoSrc} logoHeight={logoHeight} />
@@ -44,7 +44,7 @@ function Row({ text, speed, offset, includeLogo, logoSrc, logoHeight }: { text: 
     >
       {Array.from({ length: 12 }).map((_, i) => (
         <div key={i} className="flex items-center gap-8 sm:gap-10">
-          <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-wide uppercase" style={{fontFamily: `"Bodoni Moda", serif`}}>{text}</span>
+          <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-wide uppercase" style={{ fontFamily: `"Bodoni Moda", serif` }}>{text}</span>
           {includeLogo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <Image src={logoSrc || "/Storefront/images/logo (1).png"} alt="" width={logoHeight || 20} height={logoHeight || 20} className="opacity-95" style={{ height: logoHeight, width: "auto" }} />

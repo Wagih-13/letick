@@ -45,9 +45,12 @@ export default async function HomePage() {
       <WebsiteSchema searchUrl={`${baseUrl}/search?q={search_term_string}`} />
 
       <div className="flex flex-col">
-        <HeroSection />
+        <div className="h-[100vh]">
+          <HeroSection />
+
+        </div>
         <SeasonalOffersBanner />
-        <MovingBanner text="Modest Wear" />
+        <MovingBanner text="Letick Store" />
         <FeaturedProducts />
         <TrendingProducts />
         <CategoryHighlights />

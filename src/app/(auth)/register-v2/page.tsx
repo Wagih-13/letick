@@ -108,7 +108,7 @@ export default function RegisterV2() {
           </div>
           <div className="space-y-4">
             <h1 className="text-4xl font-bold leading-tight">
-              Join Modest Wear
+              Join Le Tick
             </h1>
             <p className="text-lg text-muted-foreground max-w-md">
               Create your account to shop faster, track orders, and manage your preferences.

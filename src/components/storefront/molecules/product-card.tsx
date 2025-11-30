@@ -101,7 +101,7 @@ export function ProductCard({ product, className, onQuickView }: ProductCardProp
     <Link
       href={`/product/${product.slug}`}
       className={cn(
-        "group relative block rounded-lg border bg-card transition-shadow hover:shadow-lg overflow-hidden",
+        "group relative block rounded-lg  bg-card overflow-hidden",
         className
       )}
       onMouseEnter={() => setIsHovered(true)}
@@ -134,8 +134,8 @@ export function ProductCard({ product, className, onQuickView }: ProductCardProp
         {/* Quick Actions - Show on hover */}
         <div
           className={cn(
-            "absolute right-2 top-2 flex flex-col gap-2 transition-opacity duration-200",
-            isHovered ? "opacity-100" : "opacity-0"
+            "absolute right-2 top-2 flex flex-col gap-2 transition-opacity duration-200   opacity-100",
+
           )}
         >
           <Button
@@ -166,10 +166,10 @@ export function ProductCard({ product, className, onQuickView }: ProductCardProp
         </div>
 
         {/* Add to Cart + Buy Now - Show on hover */}
-        {/* {!isOutOfStock && (
+        {!isOutOfStock && (
           <div
             className={cn(
-              "absolute bottom-0 left-0 right-0 p-2 transition-transform duration-200 translate-y-0",
+              "absolute bottom-0 left-0 hidden sm:block right-0 p-2 transition-transform duration-200 translate-y-0",
               !isHovered && "md:translate-y-full"
             )}
           >
@@ -194,7 +194,7 @@ export function ProductCard({ product, className, onQuickView }: ProductCardProp
               </Button>
             </div>
           </div>
-        )} */}
+        )}
       </div>
 
       {/* Product Info */}

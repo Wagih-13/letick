@@ -7,9 +7,9 @@ async function resetDatabase() {
   const client = new Client({
     host: process.env.DB_HOST ?? "46.202.143.88",
     port: parseInt(process.env.DB_PORT ?? "5432"),
-    user: process.env.DB_USER ?? "vercel_modestwear",
-    password: process.env.DB_PASSWORD ?? "S8v#Q2r!X5u^L9p@F1z",
-    database: process.env.DB_NAME ?? "modestwear_db",
+    user: process.env.DB_USER ?? "verce_letick",
+    password: process.env.DB_PASSWORD ?? "xK9#mP2$vL7@nQ4!wR8^zT6&",
+    database: process.env.DB_NAME ?? "letick_db",
 
   });
 
@@ -17,7 +17,7 @@ async function resetDatabase() {
     await client.connect();
     console.log("✅ Connected to PostgreSQL");
 
-    const dbName = process.env.DB_NAME ?? "modestwear_db";
+    const dbName = process.env.DB_NAME ?? "letick_db";
 
     console.log("🔄 Resetting database...");
 

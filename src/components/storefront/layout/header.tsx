@@ -1,6 +1,7 @@
-"use client";  
+"use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { ShoppingCart, Menu, X, Search, User, Heart, ChevronDown, Bell, Megaphone, AlertTriangle, PackageCheck, Truck } from "lucide-react";
@@ -95,7 +96,7 @@ export function StorefrontHeader() {
           const items = Array.isArray(data.data?.items) ? data.data.items : [];
           setNotifItems(items.map((n: any) => ({ id: n.id, title: n.title, message: n.message, createdAt: n.createdAt, actionUrl: n.actionUrl, type: n.type })));
         }
-      } catch {}
+      } catch { }
     };
     fetchPreview();
     const onVis = () => { if (document.visibilityState === "visible") fetchPreview(); };
@@ -132,11 +133,11 @@ export function StorefrontHeader() {
           } else if (data.kind === "archived") {
             setUnreadCount((c) => Math.max(0, c - 1));
           }
-        } catch {}
+        } catch { }
       };
-    } catch {}
+    } catch { }
     return () => {
-      try { es?.close(); } catch {}
+      try { es?.close(); } catch { }
     };
   }, [user?.email, user?.name]);
 
@@ -147,7 +148,7 @@ export function StorefrontHeader() {
       if (wishlistItems && wishlistItems.length > 0) {
         localStorage.setItem(`wishlist-user:${key}`, JSON.stringify(wishlistItems));
       }
-    } catch {}
+    } catch { }
   }, [wishlistItems, session?.user?.id, session?.user?.email]);
 
   // Ensure server truth for wishlist on mount/session change (no-op for guests)
@@ -169,7 +170,7 @@ export function StorefrontHeader() {
         try {
           const prevItems = getWishlistItems();
           localStorage.setItem(`wishlist-user:${prev}`, JSON.stringify(prevItems));
-        } catch {}
+        } catch { }
       }
 
       if (!session) {
@@ -189,7 +190,7 @@ export function StorefrontHeader() {
           localStorage.removeItem("cart-storage");
           localStorage.removeItem("wishlist-storage");
           // Clear server cart cookies (do not delete DB for users)
-          fetch("/api/storefront/cart/clear", { method: "POST" }).catch(() => {});
+          fetch("/api/storefront/cart/clear", { method: "POST" }).catch(() => { });
         }
       } else if (prev && prev !== key) {
         // Switching between two authenticated users -> hard clear
@@ -197,7 +198,7 @@ export function StorefrontHeader() {
           clearCart();
           localStorage.removeItem("cart-storage");
           localStorage.removeItem("wishlist-storage");
-          fetch("/api/storefront/cart/clear", { method: "POST" }).catch(() => {});
+          fetch("/api/storefront/cart/clear", { method: "POST" }).catch(() => { });
         }
         // Load target user's wishlist
         try {
@@ -214,18 +215,18 @@ export function StorefrontHeader() {
           if (current && current.length) {
             localStorage.setItem(`wishlist-user:${key}`, JSON.stringify(current));
           }
-        } catch {}
+        } catch { }
         // Persist guest wishlist to server DB once after login
         (async () => {
           try {
             await mergeToServer();
-          } catch {}
+          } catch { }
         })();
         // DO NOT clear cart cookies here; allow backend GET to merge guest cart into user
       }
 
       localStorage.setItem("last-auth-user", key);
-    } catch {}
+    } catch { }
 
     if (!session) {
       setUser(null);
@@ -248,7 +249,7 @@ export function StorefrontHeader() {
               setUser((prev) => ({ ...(prev || {}), name: full } as any));
             }
           }
-        } catch {}
+        } catch { }
       })();
       // Ensure wishlist hydrates for this user even on first login in a session
       try {
@@ -259,22 +260,45 @@ export function StorefrontHeader() {
             setWishlistItems(items);
           }
         }
-      } catch {}
+      } catch { }
     }
 
     // Always refresh cart from server after resolving session (or lack thereof)
     void fetchCart();
   }, [session?.user?.id, session?.user?.email, (session as any)?.user?.image, clearCart, clearWishlist, fetchCart]);
 
+  const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // check on mount
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const isHome = pathname === "/";
+  const isTransparent = isHome && !isScrolled;
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b bg-white backdrop-blur supports-[backdrop-filter]:bg-white">
+      <header
+        className={`top-0 z-50 w-full transition-all duration-300 ${isHome
+          ? `fixed ${isScrolled
+            ? "bg-white backdrop-blur-md text-foreground border-b supports-[backdrop-filter]:bg-white"
+            : "bg-transparent border-transparent text-white"
+          }`
+          : "sticky border-b bg-whitex   backdrop-blur-md text-foreground supports-[backdrop-filter]:bg-white"
+          }`}
+      >
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
           {/* Mobile Menu Button */}
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden"
+            className={`lg:hidden ${isTransparent ? "hover:bg-white/20 hover:text-white" : ""}`}
             onClick={() => setMobileMenuOpen(true)}
           >
             <Menu className="h-6 w-6" />
@@ -283,14 +307,15 @@ export function StorefrontHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center mr-4 sm:mr-6 lg:mr-8">
-            <Image
+            {/* <Image
               src="/Storefront/images/logo%20(1).png"
               alt="Modest Wear"
               width={140}
               height={32}
               className="h-6 w-auto sm:h-7"
               priority
-            />
+            /> */}
+            <h1 className="text-2xl font-bold">Letick</h1>
           </Link>
 
           {/* Desktop Navigation */}
@@ -299,7 +324,12 @@ export function StorefrontHeader() {
             <div className="relative group" onMouseEnter={() => setMegaOpen(true)}>
               <Link
                 href="/shop"
-                className={`inline-flex items-center gap-1 transition-colors ${megaOpen ? "text-primary" : "hover:text-foreground/80"}`}
+                className={`inline-flex items-center gap-1 transition-colors ${megaOpen
+                  ? "text-primary"
+                  : isTransparent
+                    ? "hover:text-white/80"
+                    : "hover:text-foreground/80"
+                  }`}
                 onFocus={() => setMegaOpen(true)}
               >
                 <span>Shop</span>
@@ -307,15 +337,18 @@ export function StorefrontHeader() {
               </Link>
               <span
                 aria-hidden
-                className={`pointer-events-none absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 ${
-                  megaOpen ? "w-full" : "w-0 group-hover:w-full"
-                }`}
+                className={`pointer-events-none absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 ${megaOpen ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
               />
             </div>
 
             {/* On Sale */}
             <div className="relative group">
-              <Link href="/shop/sale" className="transition-colors hover:text-foreground/80">
+              <Link
+                href="/shop/sale"
+                className={`transition-colors ${isTransparent ? "hover:text-white/80" : "hover:text-foreground/80"
+                  }`}
+              >
                 On Sale
               </Link>
               <span aria-hidden className="pointer-events-none absolute -bottom-1 left-0 h-0.5 w-0 bg-primary transition-all duration-300 group-hover:w-full" />
@@ -323,7 +356,11 @@ export function StorefrontHeader() {
 
             {/* New Arrivals */}
             <div className="relative group">
-              <Link href="/shop/new" className="transition-colors hover:text-foreground/80">
+              <Link
+                href="/shop/new"
+                className={`transition-colors ${isTransparent ? "hover:text-white/80" : "hover:text-foreground/80"
+                  }`}
+              >
                 New Arrivals
               </Link>
               <span aria-hidden className="pointer-events-none absolute -bottom-1 left-0 h-0.5 w-0 bg-primary transition-all duration-300 group-hover:w-full" />
@@ -332,7 +369,7 @@ export function StorefrontHeader() {
 
           {/* Search Bar - Desktop */}
           <div className="hidden lg:flex flex-1 max-w-[560px] mx-6">
-            <SearchBar />
+            <SearchBar transparent={isTransparent} />
           </div>
 
           {/* Actions */}
@@ -341,7 +378,7 @@ export function StorefrontHeader() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className={`lg:hidden ${isTransparent ? "hover:bg-white/20 hover:text-white" : ""}`}
               aria-expanded={searchOpen}
               aria-controls="mobile-search"
               onClick={() => setSearchOpen((v) => !v)}
@@ -352,7 +389,11 @@ export function StorefrontHeader() {
 
             {/* Wishlist */}
             <Link href="/wishlist">
-              <Button variant="ghost" size="icon" className="relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`relative ${isTransparent ? "hover:bg-white/20 hover:text-white" : ""}`}
+              >
                 <Heart className="h-5 w-5" />
                 {wishlistCount > 0 && (
                   <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">
@@ -368,7 +409,7 @@ export function StorefrontHeader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative"
+                className={`relative ${isTransparent ? "hover:bg-white/20 hover:text-white" : ""}`}
               >
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -379,19 +420,46 @@ export function StorefrontHeader() {
                 <span className="sr-only">Shopping cart ({itemCount} items)</span>
               </Button>
             </Link>
-            
-             {/* Notifications */}
+
+            {/* Notifications */}
             {user && (
-              <DropdownMenu onOpenChange={(o) => { setNotifOpen(o); if (o) { /* refresh on open */ fetch(`/api/storefront/notifications?status=unread&page=1&limit=5`, { cache: "no-store" })
-                  .then(r => r.json()).then((data) => {
-                    if (data?.success) {
-                      setUnreadCount(Number(data.data?.total || 0));
-                      const items = Array.isArray(data.data?.items) ? data.data.items : [];
-                      setNotifItems(items.map((n: any) => ({ id: n.id, title: n.title, message: n.message, createdAt: n.createdAt, actionUrl: n.actionUrl, type: n.type })));
-                    }
-                  }).catch(() => {}); } }}>
+              <DropdownMenu
+                onOpenChange={(o) => {
+                  setNotifOpen(o);
+                  if (o) {
+                    /* refresh on open */ fetch(
+                    `/api/storefront/notifications?status=unread&page=1&limit=5`,
+                    { cache: "no-store" }
+                  )
+                      .then((r) => r.json())
+                      .then((data) => {
+                        if (data?.success) {
+                          setUnreadCount(Number(data.data?.total || 0));
+                          const items = Array.isArray(data.data?.items)
+                            ? data.data.items
+                            : [];
+                          setNotifItems(
+                            items.map((n: any) => ({
+                              id: n.id,
+                              title: n.title,
+                              message: n.message,
+                              createdAt: n.createdAt,
+                              actionUrl: n.actionUrl,
+                              type: n.type,
+                            }))
+                          );
+                        }
+                      })
+                      .catch(() => { });
+                  }
+                }}
+              >
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`relative ${isTransparent ? "hover:bg-white/20 hover:text-white" : ""}`}
+                  >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
                       <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">
@@ -401,7 +469,11 @@ export function StorefrontHeader() {
                     <span className="sr-only">Notifications</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" sideOffset={6} className="w-80 rounded-lg p-0 overflow-hidden">
+                <DropdownMenuContent
+                  align="end"
+                  sideOffset={6}
+                  className="w-80 rounded-lg p-0 overflow-hidden"
+                >
                   <div className="flex items-center justify-between px-3 py-2 border-b bg-muted/30">
                     <span className="text-sm font-medium">Notifications</span>
                     <Button
@@ -410,9 +482,15 @@ export function StorefrontHeader() {
                       className="text-xs"
                       onClick={async () => {
                         try {
-                          const res = await fetch("/api/storefront/notifications/mark-all", { method: "POST" });
-                          if (res.ok) { setUnreadCount(0); toast.success("All notifications marked as read"); }
-                        } catch {}
+                          const res = await fetch(
+                            "/api/storefront/notifications/mark-all",
+                            { method: "POST" }
+                          );
+                          if (res.ok) {
+                            setUnreadCount(0);
+                            toast.success("All notifications marked as read");
+                          }
+                        } catch { }
                       }}
                     >
                       Mark all as read
@@ -420,26 +498,41 @@ export function StorefrontHeader() {
                   </div>
                   <div className="max-h-96 overflow-auto">
                     {notifItems.length === 0 ? (
-                      <div className="px-4 py-6 text-sm text-muted-foreground">You're all caught up</div>
+                      <div className="px-4 py-6 text-sm text-muted-foreground">
+                        You're all caught up
+                      </div>
                     ) : (
                       notifItems.map((n) => (
                         <button
                           key={n.id}
                           className="w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors"
                           onClick={async () => {
-                            try { await fetch(`/api/storefront/notifications/${n.id}/read`, { method: "POST" }); setUnreadCount((c) => Math.max(0, c - 1)); toast.success("Marked as read"); } catch {}
+                            try {
+                              await fetch(
+                                `/api/storefront/notifications/${n.id}/read`,
+                                { method: "POST" }
+                              );
+                              setUnreadCount((c) => Math.max(0, c - 1));
+                              toast.success("Marked as read");
+                            } catch { }
                             if (n.actionUrl) window.location.href = n.actionUrl;
                           }}
                         >
-                          <div className="text-sm font-medium line-clamp-1">{n.title}</div>
-                          <div className="text-xs text-muted-foreground line-clamp-2">{n.message}</div>
+                          <div className="text-sm font-medium line-clamp-1">
+                            {n.title}
+                          </div>
+                          <div className="text-xs text-muted-foreground line-clamp-2">
+                            {n.message}
+                          </div>
                         </button>
                       ))
                     )}
                   </div>
                   <div className="border-t p-2">
                     <Link href="/account/notifications">
-                      <Button variant="ghost" className="w-full">View all notifications</Button>
+                      <Button variant="ghost" className="w-full">
+                        View all notifications
+                      </Button>
                     </Link>
                   </div>
                 </DropdownMenuContent>
@@ -450,10 +543,17 @@ export function StorefrontHeader() {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="relative px-2 sm:px-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`relative px-2 sm:px-3 text-black`}
+                  >
                     {user?.image ? (
                       <Avatar className="h-6 w-6 mr-0 sm:mr-2">
-                        <AvatarImage src={user.image} alt={user?.name || user?.email || "User"} />
+                        <AvatarImage
+                          src={user.image}
+                          alt={user?.name || user?.email || "User"}
+                        />
                         <AvatarFallback>{getInitials(firstName)}</AvatarFallback>
                       </Avatar>
                     ) : (
@@ -461,10 +561,16 @@ export function StorefrontHeader() {
                         <AvatarFallback>{getInitials(firstName)}</AvatarFallback>
                       </Avatar>
                     )}
-                    <span className="hidden sm:inline max-w-[120px] truncate">{firstName}</span>
+                    <span className="hidden sm:inline max-w-[120px] truncate">
+                      {firstName}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" sideOffset={6} className="min-w-56 rounded-lg">
+                <DropdownMenuContent
+                  align="end"
+                  sideOffset={6}
+                  className="min-w-56 rounded-lg"
+                >
                   <DropdownMenuLabel>
                     {user?.name || user?.email || "Account"}
                   </DropdownMenuLabel>
@@ -495,18 +601,29 @@ export function StorefrontHeader() {
                       try {
                         clearCart();
                         // Persist current user's wishlist snapshot before logout
-                        const key = (session as any)?.user?.id || (session as any)?.user?.email || "guest";
+                        const key =
+                          (session as any)?.user?.id ||
+                          (session as any)?.user?.email ||
+                          "guest";
                         try {
                           const current = getWishlistItems();
-                          localStorage.setItem(`wishlist-user:${key}`, JSON.stringify(current));
-                        } catch {}
+                          localStorage.setItem(
+                            `wishlist-user:${key}`,
+                            JSON.stringify(current)
+                          );
+                        } catch { }
                         localStorage.removeItem("last-auth-user");
                         localStorage.removeItem("cart-storage");
                         localStorage.removeItem("wishlist-storage");
-                      } catch {}
+                      } catch { }
                       // Best-effort server-side clear and cookie reset
-                      fetch("/api/storefront/cart/clear", { method: "POST" }).finally(() => {
-                        const cb = process.env.NODE_ENV === "production" ? siteConfig.url : "/";
+                      fetch("/api/storefront/cart/clear", {
+                        method: "POST",
+                      }).finally(() => {
+                        const cb =
+                          process.env.NODE_ENV === "production"
+                            ? siteConfig.url
+                            : "/";
                         signOut({ callbackUrl: cb });
                       });
                     }}
@@ -517,7 +634,11 @@ export function StorefrontHeader() {
               </DropdownMenu>
             ) : (
               <Link href={siteConfig.routes.login}>
-                <Button variant="ghost" size="icon" className="relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`relative ${isTransparent ? "hover:bg-white/20 hover:text-white" : ""}`}
+                >
                   <User className="h-5 w-5" />
                   <span className="sr-only">Login</span>
                 </Button>
@@ -529,12 +650,20 @@ export function StorefrontHeader() {
         {/* Mobile Search Inline (top-start) */}
         {searchOpen && (
           <div className="lg:hidden border-t">
-            <div className="mx-auto w-full max-w-7xl px-4 py-2" id="mobile-search">
+            <div
+              className="mx-auto w-full max-w-7xl px-4 py-2"
+              id="mobile-search"
+            >
               <div className="flex items-center gap-2">
                 <div className="flex-1">
                   <SearchBar onClose={() => setSearchOpen(false)} />
                 </div>
-                <Button variant="ghost" size="icon" aria-label="Close search" onClick={() => setSearchOpen(false)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Close search"
+                  onClick={() => setSearchOpen(false)}
+                >
                   <X className="h-5 w-5" />
                 </Button>
               </div>

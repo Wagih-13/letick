@@ -78,7 +78,7 @@ export default function OrdersPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error?.message || "Failed to load metrics");
       setMetrics(data.data || null);
-    } catch {}
+    } catch { }
   }
 
   const columns = useMemo(
@@ -87,7 +87,7 @@ export default function OrdersPage() {
         onView: (row) => {
           void openDetails(row);
         },
-        onEdit: (row) => { 
+        onEdit: (row) => {
           setEditing(row);
           setForm({ status: row.status, paymentStatus: row.paymentStatus, adminNote: "" });
           setOpen(true);
@@ -277,6 +277,33 @@ export default function OrdersPage() {
               Filtered by customer: <code className="text-xs">{userIdFilter}</code>
             </div>
           )}
+          <Button
+            variant="destructive"
+            className="mr-2"
+            onClick={async () => {
+              const yes = confirm("Are you sure you want to DELETE ALL orders? This action cannot be undone.");
+              if (!yes) return;
+              const doubleCheck = confirm("Seriously, this will wipe the entire orders table. Confirm?");
+              if (!doubleCheck) return;
+
+              try {
+                setLoading(true);
+                const res = await fetch("/api/v1/orders/all", { method: "DELETE" });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data?.error?.message || "Failed to delete all orders");
+                toast.success("All orders deleted");
+                void fetchOrders();
+                void fetchMetrics();
+              } catch (e: any) {
+                toast.error(e.message || "Delete all failed");
+              } finally {
+                setLoading(false);
+              }
+            }}
+            disabled={loading || total === 0}
+          >
+            Delete All
+          </Button>
           <Button variant="outline" onClick={() => void fetchOrders()} disabled={loading}>
             <RefreshCcw className="mr-1 h-4 w-4" /> Refresh
           </Button>

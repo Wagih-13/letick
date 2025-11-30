@@ -8,8 +8,8 @@ import { PromoBand } from "@/components/storefront/layout/promo-band";
 import { CurrencyProvider } from "@/components/storefront/providers/currency-provider";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-const siteName = "Modest Wear";
-const siteDescription = "Shop premium modest fashion and Islamic clothing online. Discover elegant hijabs, abayas, modest dresses, and modern Islamic wear. Free shipping, authentic styles, worldwide delivery.";
+const siteName = "Le Tick";
+const siteDescription = "Le Tick is a premium watches store for men and women. Discover elegant hijabs, abayas, modest dresses, and modern Islamic wear. Free shipping, authentic styles, worldwide delivery.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -19,16 +19,16 @@ export const metadata: Metadata = {
   },
   description: siteDescription,
   keywords: [
-    "modest fashion",
-    "modest wear",
-    "islamic clothing",
-    "hijab",
-    "abaya",
-    "modest dresses",
-    "muslim fashion",
-    "modest clothing online",
-    "islamic fashion store",
-    "halal fashion"
+    "watches",
+    "men's watches",
+    "women's watches",
+    "luxury watches",
+    "premium watches",
+    "authentic watches",
+    "high-quality watches",
+    "modern watches",
+    "classic watches",
+    "best watches"
   ],
   authors: [{ name: siteName }],
   creator: siteName,

@@ -85,7 +85,7 @@ class OrdersService {
             );
           }
         }
-      } catch {}
+      } catch { }
       return success(row);
     } catch (e: any) {
       return failure("UPDATE_ORDER_FAILED", e?.message || "Failed to update order");
@@ -99,6 +99,15 @@ class OrdersService {
       return success({ id });
     } catch (e: any) {
       return failure("DELETE_ORDER_FAILED", e?.message || "Failed to delete order");
+    }
+  }
+
+  async removeAll(): Promise<ServiceResult<{ success: boolean }>> {
+    try {
+      await ordersRepository.removeAll();
+      return success({ success: true });
+    } catch (e: any) {
+      return failure("DELETE_ALL_ORDERS_FAILED", e?.message || "Failed to delete all orders");
     }
   }
 }

@@ -21,21 +21,21 @@ export const PRODUCTS_DATA = [
   { name: "Dell XPS 15", slug: "dell-xps-15", sku: "DEL-XPS15-I9", price: "1899.00", category: "Laptops", description: "Premium Windows laptop" },
   { name: "Sony WH-1000XM5", slug: "sony-wh1000xm5", sku: "SNY-WH1000XM5", price: "399.00", category: "Audio", description: "Industry-leading noise cancellation headphones", isFeatured: true },
   { name: "AirPods Pro 2", slug: "airpods-pro-2", sku: "APL-APP2-USB", price: "249.00", category: "Audio", description: "Active noise cancellation earbuds" },
-  
+
   // Clothing
   { name: "Classic Denim Jacket", slug: "classic-denim-jacket", sku: "CLO-DNM-JKT-M", price: "89.00", category: "Men", description: "Timeless denim jacket for men" },
   { name: "Slim Fit Chinos", slug: "slim-fit-chinos", sku: "CLO-CHN-SLM-M", price: "59.00", category: "Men", description: "Comfortable slim fit chinos" },
   { name: "Summer Floral Dress", slug: "summer-floral-dress", sku: "CLO-DRS-FLR-W", price: "79.00", category: "Women", description: "Light and breezy summer dress", isFeatured: true },
   { name: "Yoga Leggings", slug: "yoga-leggings", sku: "CLO-LEG-YGA-W", price: "45.00", category: "Women", description: "High-waisted yoga leggings" },
-  
+
   // Home & Garden
   { name: "Smart LED Bulb Set", slug: "smart-led-bulb-set", sku: "HOM-LED-SMT-4P", price: "49.00", category: "Home & Garden", description: "4-pack WiFi enabled smart bulbs" },
   { name: "Robot Vacuum Cleaner", slug: "robot-vacuum", sku: "HOM-VAC-RBT-X1", price: "299.00", category: "Home & Garden", description: "Auto-cleaning robot vacuum", isFeatured: true },
-  
+
   // Sports
   { name: "Yoga Mat Premium", slug: "yoga-mat-premium", sku: "SPT-YGA-MAT-PR", price: "39.00", category: "Sports", description: "Non-slip premium yoga mat" },
   { name: "Adjustable Dumbbells", slug: "adjustable-dumbbells", sku: "SPT-DMB-ADJ-50", price: "199.00", category: "Sports", description: "50lb adjustable dumbbell set" },
-  
+
   // Books
   { name: "The Art of Programming", slug: "art-of-programming", sku: "BOK-PRG-ART-01", price: "45.00", category: "Books", description: "Comprehensive programming guide" },
   { name: "Digital Marketing 2025", slug: "digital-marketing-2025", sku: "BOK-MKT-DIG-25", price: "35.00", category: "Books", description: "Latest digital marketing strategies" },
@@ -63,7 +63,7 @@ export const EMAIL_TEMPLATES_DATA = [
 ];
 
 export const SYSTEM_SETTINGS_DATA = [
-  { key: "site_name", value: "Modest Wear", type: "string", isPublic: true },
+  { key: "site_name", value: "Letick Store", type: "string", isPublic: true },
   { key: "site_description", value: "Modern E-commerce Platform", type: "string", isPublic: true },
   { key: "currency", value: "EGY", type: "string", isPublic: true },
   { key: "tax_rate", value: "0", type: "number", isPublic: true },

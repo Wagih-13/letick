@@ -137,6 +137,11 @@ export class OrdersRepository {
     const res = await db.delete(schema.orders).where(eq(schema.orders.id, id));
     return res.rowCount ? res.rowCount > 0 : false;
   }
+
+  async removeAll() {
+    const res = await db.delete(schema.orders);
+    return res.rowCount ? res.rowCount > 0 : true;
+  }
 }
 
 export const ordersRepository = new OrdersRepository();

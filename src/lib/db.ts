@@ -10,9 +10,9 @@ dotenv.config();
 const client = postgres({
   host: process.env.DB_HOST ?? "46.202.143.88",
   port: parseInt(process.env.DB_PORT ?? "5432"),
-  username: process.env.DB_USER ?? "vercel_modestwear",
-  password: process.env.DB_PASSWORD ?? '"G!9r@T7m#Q2^wK8$Z1p*L4f%X5u"',
-  database: process.env.DB_NAME ?? "modestwear_db",
+  username: process.env.DB_USER ?? "verce_letick",
+  password: process.env.DB_PASSWORD ?? '"xK9#mP2$vL7@nQ4!wR8^zT6&"',
+  database: process.env.DB_NAME ?? "letick_db",
   ssl: false,
   max: 20,
 });

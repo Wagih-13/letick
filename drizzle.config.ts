@@ -7,9 +7,9 @@ export default defineConfig({
   dbCredentials: {
     host: "46.202.143.88",
     port: 5432,
-    user: "vercel_modestwear",
-    password: "S8v#Q2r!X5u^L9p@F1z", // ثابت بدون process.env
-    database: "modestwear_db",
+    user: "verce_letick",
+    password: "xK9#mP2$vL7@nQ4!wR8^zT6&", // ثابت بدون process.env
+    database: "letick_db",
     ssl: false,
   },
   verbose: true,

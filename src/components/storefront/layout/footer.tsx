@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Facebook, Instagram, Camera } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { AiFillTikTok } from "react-icons/ai";
 
 export function StorefrontFooter() {
   const currentYear = new Date().getFullYear();
@@ -16,22 +17,23 @@ export function StorefrontFooter() {
           {/* Company Info */}
           <div>
             <Link href="/" className="inline-flex items-center mb-4">
-              <Image
+              {/* <Image
                 src="/Storefront/images/logo%20(1).png"
                 alt="Modest Wear"
                 width={160}
                 height={40}
                 className="h-7 w-auto"
                 priority
-              />
-              <span className="sr-only">Modest Wear</span>
+              /> */}
+              <h1 className="text-2xl font-bold">Letick </h1>
+              <span className="sr-only">Letick Store</span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4">
               Modern e-commerce platform with best-in-class shopping experience.
             </p>
             <div className="flex space-x-4">
               <Link
-                href="https://www.facebook.com/people/Modest-wear/61563898827652/?ref=pro_upsell_xav_ig_profile_page_web#"
+                href="https://www.facebook.com/people/LE-TICK/61578018620812/?ref=pl_edit_xav_ig_profile_page_web#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -39,9 +41,9 @@ export function StorefrontFooter() {
                 <Facebook className="h-5 w-5" />
                 <span className="sr-only">Facebook</span>
               </Link>
-            
+
               <Link
-                href="https://www.instagram.com/modestwear.online"
+                href="https://www.instagram.com/le__tick_/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -49,7 +51,16 @@ export function StorefrontFooter() {
                 <Instagram className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
               </Link>
-             
+              <Link
+                href="https://www.tiktok.com/@le__tick_?_t=ZS-8xYDWd4BVbE&_r=1&utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGntzTQAmpE5ngq4ucD6IbsnXT7MsbidHqo4FYnCzwJBEF8W-mrnTcZFagqLIg_aem_z9HmsUr3QwGW87J097OnKw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <AiFillTikTok className="h-5 w-5" />
+                <span className="sr-only">Instagram</span>
+              </Link>
+
             </div>
           </div>
 
@@ -175,7 +186,7 @@ export function StorefrontFooter() {
 
         {/* Bottom Bar */}
         <div className="mt-12 border-t pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-          <p>&copy; {currentYear} Modest Wear. All rights reserved.</p>
+          <p>&copy; {currentYear} Letick Store. All rights reserved.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <Link
               href="/privacy"
