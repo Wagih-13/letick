@@ -25,21 +25,21 @@ export async function CategoryHighlights() {
       <div className="mb-6 text-left">
         <h2 className="text-3xl font-extrabold tracking-tight">Browse By Category</h2>
         <p className="text-muted-foreground mt-2">
-            Most Popular categories just for you
+          Most Popular categories just for you
         </p>
       </div>
 
       {/* Asymmetric mosaic grid sized to fit one screen */}
-      <div className="grid grid-cols-2 md:grid-cols-6 grid-flow-dense auto-rows-[120px] md:auto-rows-[140px] lg:auto-rows-[160px] gap-3 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 grid-flow-dense auto-rows-[120px] md:auto-rows-[140px] lg:auto-rows-[160px] gap-3 md:gap-4">
         {categories.slice(0, 5).map((category: any, i: number) => {
           const pattern = [
-            "md:col-span-3 md:row-span-2", // big left
-            "md:col-span-3 md:row-span-2", // big right
-            "md:col-span-2 md:row-span-1", // small
-            "md:col-span-2 md:row-span-1", // small
-            "md:col-span-2 md:row-span-1", // small
+            "row-span-2 md:col-span-3 md:row-span-2", // big left
+            "row-span-2 md:col-span-3 md:row-span-2", // big right
+            "row-span-2 md:col-span-2 md:row-span-1", // small
+            "row-span-2 md:col-span-2 md:row-span-1", // small
+            "row-span-2 md:col-span-2 md:row-span-1", // small
           ];
-          const span = pattern[i] || "md:col-span-2 md:row-span-1";
+          const span = pattern[i] || "row-span-2 md:col-span-2 md:row-span-1";
           return (
             <Link
               key={category.id}

@@ -38,9 +38,9 @@ export default async function HomePage() {
       <OrganizationSchema
         socialProfiles={[
           // Add your actual social media URLs
-          "https://facebook.com/modestwear",
-          "https://instagram.com/modestwear",
-          "https://twitter.com/modestwear",
+          "https://facebook.com/le-tick",
+          "https://instagram.com/le-tick",
+          "https://twitter.com/le-tick",
         ]}
       />
       <WebsiteSchema searchUrl={`${baseUrl}/search?q={search_term_string}`} />

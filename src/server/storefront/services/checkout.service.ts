@@ -12,7 +12,7 @@ export interface PlaceOrderInput {
   cartId: string;
   shippingAddress: any;
   shippingMethod: { id: string; name: string; price: number; description?: string; estimatedDays?: number; carrier?: string };
-  paymentMethod: { type: string; [k: string]: any };
+  paymentMethod: { type: string;[k: string]: any };
   customerEmail?: string;
   customerPhone?: string;
 }
@@ -169,7 +169,7 @@ export class StorefrontCheckoutService {
           .update(schema.discounts)
           .set({ usageCount: (schema.discounts.usageCount as any) + 1 } as any)
           .where(eq(schema.discounts.id, appliedDiscount.id));
-      } catch {}
+      } catch { }
     }
 
     // Optional: create a shipment row linked to a shipping method table when available
@@ -214,7 +214,7 @@ export class StorefrontCheckoutService {
           { userId: validUserId },
         );
       }
-    } catch {}
+    } catch { }
 
     try {
       if (order) {
@@ -241,7 +241,9 @@ export class StorefrontCheckoutService {
           shippingAddress,
         }, { userId: validUserId });
       }
-    } catch {}
+    } catch (error) {
+      console.error("Failed to send new order notification:", error);
+    }
 
     // Clear cart after successful order
     await storefrontCartService.clearCart(input.cartId);

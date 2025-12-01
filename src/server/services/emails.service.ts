@@ -224,7 +224,11 @@ class EmailsService {
    */
   async sendNewOrderNotification(orderData: any, actor?: ActorContext) {
     try {
-      const to = process.env.NOTIFICATION_EMAIL || process.env.EMAIL_TO || process.env.EMAIL_USER || process.env.EMAIL_FROM || "";
+      let to = process.env.NOTIFICATION_EMAIL || process.env.EMAIL_TO || process.env.EMAIL_USER || process.env.EMAIL_FROM || "";
+      // Clean up multiple emails (trim spaces)
+      if (to.includes(",")) {
+        to = to.split(",").map(e => e.trim()).filter(Boolean).join(",");
+      }
       if (!to) return failure("EMAIL_SEND_FAILED", "No recipient configured");
 
       const html = this.getNewOrderEmailTemplate(orderData);

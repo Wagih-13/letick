@@ -27,12 +27,12 @@ export function HeroSection() {
         <div className="mx-auto max-w-4xl space-y-6 text-center">
           {/* Title */}
           <h1
-            className="mt-20 mb-4 text-center text-4xl font-bold text-white sm:text-2xl lg:text-5xl"
+            className="mt-20 mb-4 text-center text-4xl font-bold text-white text-xl sm:width-[90%] md:text-4xl lg:text-5xl"
             style={{ width: "80%", margin: "20px auto", lineHeight: "1.3" }}
           >
             Elevate Your Style with Timeless Luxury Watches & Exquisite Leather Wallets
           </h1>
-          <p className="mx-auto w-[500px] text-center text-sm text-white" style={{ width: "70%", margin: "20px auto" }}>
+          <p className="mx-auto hidden sm:block w-[500px] text-center text-sm text-white" style={{ width: "70%", margin: "20px auto" }}>
             Discover the perfect blend of craftsmanship and sophistication. Our curated collection of luxury timepieces
             and premium leather wallets offers unmatched elegance for the discerning individual.
           </p>
