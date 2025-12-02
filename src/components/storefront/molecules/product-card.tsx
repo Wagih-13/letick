@@ -15,7 +15,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/components/storefront/providers/currency-provider";
-import { trackAddToCart, trackAddToWishlist } from "@/lib/fbq";
 
 function truncateWords(text: string, limit: number) {
   const words = (text || "").trim().split(/\s+/);
@@ -51,32 +50,12 @@ export function ProductCard({ product, className, onQuickView }: ProductCardProp
     e.preventDefault();
     e.stopPropagation();
     await addItem(product.id, undefined, 1);
-
-    // Track AddToCart event
-    trackAddToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      currency: "EGP",
-      quantity: 1,
-    });
   };
 
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const wasInWishlist = wish;
     toggleWishlist(product);
-
-    // Track AddToWishlist event only when adding (not removing)
-    if (!wasInWishlist) {
-      trackAddToWishlist({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        currency: "EGP",
-      });
-    }
   };
 
   const handleQuickView = (e: React.MouseEvent) => {

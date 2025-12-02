@@ -22,7 +22,6 @@ import { ShoppingCart, ExternalLink, X } from "lucide-react";
 import type { Product } from "@/types/storefront";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { trackAddToCart } from "@/lib/fbq";
 
 interface QuickViewModalProps {
   productSlug: string | null;
@@ -69,18 +68,6 @@ export function QuickViewModal({
   const handleAddToCart = async () => {
     if (!product) return;
     await addItem(product.id, selectedVariant, quantity);
-
-    // Track AddToCart event
-    trackAddToCart({
-      id: product.id,
-      name: product.name,
-      price: currentPrice,
-      currency: "EGP",
-      category: product.categories?.[0]?.name,
-      variantId: selectedVariant,
-      quantity,
-    });
-
     onClose();
   };
 
@@ -164,8 +151,8 @@ export function QuickViewModal({
                       key={image.id}
                       onClick={() => setSelectedImageIndex(index)}
                       className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
-                        ? "border-primary"
-                        : "border-transparent hover:border-muted-foreground/20"
+                          ? "border-primary"
+                          : "border-transparent hover:border-muted-foreground/20"
                         }`}
                     >
                       <Image

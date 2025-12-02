@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Download, Package, Copy, ExternalLink } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { trackPurchase } from "@/lib/fbq";
 
 export default function OrderConfirmationPage({ params }: { params: Promise<{ id: string }> }) {
   const [orderId, setOrderId] = useState<string>("");
@@ -15,8 +14,6 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
   const [loadingTracking, setLoadingTracking] = useState(false);
   const [trackingError, setTrackingError] = useState<string | null>(null);
   const [shippingAddress, setShippingAddress] = useState<any>(null);
-  const [orderData, setOrderData] = useState<any>(null);
-  const purchaseTracked = useRef(false);
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -78,47 +75,6 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
       cancelled = true;
     };
   }, []);
-
-  // Fetch order details for Purchase tracking
-  useEffect(() => {
-    if (!orderId) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(`/api/storefront/orders/${orderId}`, { cache: "no-store" });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (!cancelled && data?.success) {
-          setOrderData(data.data);
-        }
-      } catch {
-        // ignore
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [orderId]);
-
-  // Track Purchase event once when order data is loaded
-  useEffect(() => {
-    if (orderData && !purchaseTracked.current) {
-      purchaseTracked.current = true;
-
-      // Extract items from order
-      const items = (orderData.items || []).map((item: any) => ({
-        id: item.variantId || item.productId,
-        quantity: item.quantity,
-        item_price: item.unitPrice || item.price,
-      }));
-
-      trackPurchase({
-        currency: orderData.currency || "EGP",
-        value: orderData.totalAmount || orderData.total,
-        items,
-      });
-    }
-  }, [orderData]);
 
   const carrierTrackUrl = (carrier?: string, trackingNumber?: string) => {
     if (!carrier || !trackingNumber) return undefined;
