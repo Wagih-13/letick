@@ -154,6 +154,19 @@ export default function CheckoutPage() {
           : undefined;
         throw new Error(details ? `${serverMsg}: ${details}` : serverMsg);
       }
+        try {
+        const currencyCode = cart?.currency || "EGP";
+        const shippingValue = shippingMethod ? Number(shippingMethod.price) || 0 : 0;
+        const items = (cart?.items || []).map((it) => ({
+          id: it.variantId || it.productId,
+          quantity: Number(it.quantity || 0),
+          item_price: Number(it.unitPrice || 0),
+        }));
+        const value = Number(cart?.totalAmount || 0) + shippingValue;
+        const orderNumberTmp = data.data?.orderNumber ?? data.data?.id;
+        const eventId = orderNumberTmp ? `ord_${orderNumberTmp}` : undefined;
+        trackPurchase({ currency: currencyCode, value, items, eventId });
+      } catch {}
 
       // If this was a Buy Now flow, restore the previous cart cookie before redirect
       if (isBuyNow) {
@@ -162,21 +175,7 @@ export default function CheckoutPage() {
           await fetchCart();
         } catch { /* ignore */ }
       }
-      try {
-        if (cart && cart.items.length > 0) {
-          const purchaseItems = cart.items.map((item) => ({
-            id: item.productId,
-            quantity: item.quantity,
-            item_price: item.unitPrice,
-          }));
-          const purchaseValue = cart.totalAmount + (shippingMethod ? (Number(shippingMethod.price) || 0) : 0);
-          trackPurchase({
-            currency: (cart.currency || "EGP") as string,
-            value: purchaseValue,
-            items: purchaseItems,
-          });
-        }
-      } catch {}
+
       const orderNumber = data.data?.orderNumber ?? data.data?.id;
       toast.success("Order placed successfully");
       try {

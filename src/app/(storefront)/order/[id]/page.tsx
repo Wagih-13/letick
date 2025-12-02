@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Download, Package, Copy, ExternalLink } from "lucide-react";
@@ -8,6 +8,8 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { trackPurchase } from "@/lib/fbq";
+import { useCurrency } from "@/components/storefront/providers/currency-provider";
+
 
 export default function OrderConfirmationPage({ params }: { params: Promise<{ id: string }> }) {
   const [orderId, setOrderId] = useState<string>("");
@@ -16,6 +18,8 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
   const [trackingError, setTrackingError] = useState<string | null>(null);
   const [shippingAddress, setShippingAddress] = useState<any>(null);
   const { data: session } = useSession();
+  const { currency } = useCurrency();
+    const purchaseFiredRef = useRef(false);
 
   useEffect(() => {
     params.then((p) => setOrderId(p.id));
@@ -39,26 +43,37 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
     } catch {}
   }, [orderId]);
 
-  useEffect(() => {
+   useEffect(() => {
     if (!orderId) return;
+    if (purchaseFiredRef.current) return;
     let cancelled = false;
     (async () => {
       try {
-        setLoadingTracking(true);
-        const res = await fetch(`/api/storefront/orders/${orderId}/tracking`, { cache: "no-store" });
-        const data = await res.json();
-        if (!res.ok || !data?.success) throw new Error(data?.error?.message || "Failed to load tracking");
-        if (!cancelled) setTracking(data.data);
-      } catch (e: any) {
-        if (!cancelled) setTrackingError(e?.message || "Failed to load tracking");
-      } finally {
-        if (!cancelled) setLoadingTracking(false);
-      }
+        const res = await fetch(`/api/storefront/orders/${orderId}`, { cache: "no-store" });
+        const json = await res.json();
+        if (!res.ok || !json?.success) return;
+        const ord = json.data;
+        const items = (ord.items || []).map((it: any) => ({
+          id: String(it.variantId || it.productId || it.sku || it.productSlug || it.id),
+          quantity: Number(it.quantity || 0),
+          item_price: Number(it.price || 0),
+        }));
+        if (!cancelled) {
+          const eventId = orderId ? `ord_${orderId}` : undefined;
+          trackPurchase({
+            currency: currency.code || "EGP",
+            value: Number(ord.total || 0),
+            items,
+            eventId,
+          });
+          purchaseFiredRef.current = true;
+        }
+      } catch {}
     })();
     return () => {
       cancelled = true;
     };
-  }, [orderId]);
+  }, [orderId, currency.code]);
 
   // Poll tracking until delivered
   const isDelivered = useMemo(() => {

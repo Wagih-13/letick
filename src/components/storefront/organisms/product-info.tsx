@@ -14,6 +14,7 @@ import { useWishlistStore } from "@/stores/wishlist.store";
 import type { Product } from "@/types/storefront";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { useCurrency } from "@/components/storefront/providers/currency-provider";
 import { trackAddToCart, trackAddToWishlist } from "@/lib/fbq";
 
 interface ProductInfoProps {
@@ -33,21 +34,20 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const isLoading = useCartStore((state) => state.isLoading);
   const toggleWishlist = useWishlistStore((state) => state.toggleItem);
   const isInWishlist = useWishlistStore((state) => state.isInWishlist(product.id));
-
+const { currency } = useCurrency();
   const currentVariant = product.variants?.find((v) => v.id === selectedVariant);
   const currentPrice = currentVariant?.price || product.price;
   const currentStock = currentVariant?.stockQuantity || 999; // Fallback to high number
   const isOutOfStock = product.stockStatus === "out_of_stock" || currentStock === 0;
 
-  const handleAddToCart = async () => {
+ const handleAddToCart = async () => {
     await addItem(product.id, selectedVariant, quantity);
     trackAddToCart({
-      id: product.id,
-      name: product.name,
-      price: Number(currentPrice),
-      category: product.categories?.[0]?.name,
-      variantId: selectedVariant,
-      quantity,
+      content_ids: [selectedVariant || product.id],
+      content_name: product.name,
+      value: Number(currentPrice || 0),
+      currency: currency.code || "EGP",
+      content_type: "product",
     });
   };
 

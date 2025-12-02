@@ -51,12 +51,7 @@ export function ProductCard({ product, className, onQuickView }: ProductCardProp
     e.preventDefault();
     e.stopPropagation();
     await addItem(product.id, undefined, 1);
-    trackAddToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      quantity: 1,
-    });
+
   };
 
   const handleWishlist = (e: React.MouseEvent) => {

@@ -22,6 +22,7 @@ import { ShoppingCart, ExternalLink, X } from "lucide-react";
 import type { Product } from "@/types/storefront";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { useCurrency } from "@/components/storefront/providers/currency-provider";
 import { trackAddToCart } from "@/lib/fbq";
 
 interface QuickViewModalProps {
@@ -43,7 +44,7 @@ export function QuickViewModal({
 
   const addItem = useCartStore((state) => state.addItem);
   const isLoading = useCartStore((state) => state.isLoading);
-
+const { currency } = useCurrency();
   // Fetch product data
   const { data: product, isLoading: productLoading } = useQuery<Product>({
     queryKey: ["product-quick-view", productSlug],
@@ -66,20 +67,23 @@ export function QuickViewModal({
     setSelectedVariant(product.variants[0].id);
   }
 
+
   const handleAddToCart = async () => {
     if (!product) return;
     await addItem(product.id, selectedVariant, quantity);
     onClose();
-    trackAddToCart({
-      id: product.id,
-      name: product.name,
-      price: Number(currentPrice),
-      category: product.categories?.[0]?.name,
-      variantId: selectedVariant,
-      quantity,
-    });
+    try {
+      const itemPrice = Number(currentVariant?.price || product?.price || 0);
+      trackAddToCart({
+        content_ids: [selectedVariant || product.id],
+        content_name: product.name,
+        value: itemPrice,
+        currency: currency.code || "EGP",
+        content_type: "product",
+      });
+    } catch { }
   };
-
+  
   const handleBuyNow = async () => {
     try {
       if (!product) return;
