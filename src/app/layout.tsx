@@ -58,15 +58,16 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             fbq('track', 'PageView');
           `}
         </Script>
+
         <noscript>
           <img
             height="1"
             width="1"
             style={{ display: "none" }}
-            src={`https://www.facebook.com/tr?id=${process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID}&ev=PageView&noscript=1`}
-            alt=""
+            src="https://www.facebook.com/tr?id=1600443481133843&ev=PageView&noscript=1"
           />
         </noscript>
+
         <Analytics />
         <SpeedInsights />
         <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
