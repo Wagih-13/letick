@@ -7,6 +7,7 @@ import { CheckCircle, Download, Package, Copy, ExternalLink } from "lucide-react
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { trackPurchase } from "@/lib/fbq";
 
 export default function OrderConfirmationPage({ params }: { params: Promise<{ id: string }> }) {
   const [orderId, setOrderId] = useState<string>("");
@@ -19,6 +20,24 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
   useEffect(() => {
     params.then((p) => setOrderId(p.id));
   }, [params]);
+
+  // Fallback: if purchase event was queued before redirect, send it here
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("fbq:purchase");
+      if (!raw) return;
+      const payload = JSON.parse(raw);
+      if (!payload) return;
+      trackPurchase({
+        currency: payload.currency,
+        value: payload.value,
+        items: payload.items,
+      });
+    } catch {}
+    try {
+      sessionStorage.removeItem("fbq:purchase");
+    } catch {}
+  }, [orderId]);
 
   useEffect(() => {
     if (!orderId) return;

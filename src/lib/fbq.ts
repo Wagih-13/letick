@@ -15,9 +15,29 @@ declare global {
 /**
  * Safely execute fbq command if available
  */
+let __fbqQueue: any[] = [];
+let __fbqTimer: any = null;
 function fbq(...args: any[]): void {
-  if (typeof window !== "undefined" && window.fbq) {
+  if (typeof window !== "undefined" && typeof window.fbq === "function") {
     window.fbq(...args);
+  } else {
+    __fbqQueue.push(args);
+    if (!__fbqTimer && typeof window !== "undefined") {
+      __fbqTimer = setInterval(() => {
+        if (typeof window !== "undefined" && typeof window.fbq === "function") {
+          const q = __fbqQueue.splice(0);
+          for (const a of q) window.fbq!(...a);
+          clearInterval(__fbqTimer);
+          __fbqTimer = null;
+        }
+      }, 150);
+      setTimeout(() => {
+        if (__fbqTimer) {
+          clearInterval(__fbqTimer);
+          __fbqTimer = null;
+        }
+      }, 8000);
+    }
   }
 }
 

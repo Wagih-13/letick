@@ -179,6 +179,22 @@ export default function CheckoutPage() {
       } catch {}
       const orderNumber = data.data?.orderNumber ?? data.data?.id;
       toast.success("Order placed successfully");
+      try {
+        if (cart && cart.items.length > 0) {
+          const purchaseItems = cart.items.map((item) => ({
+            id: item.productId,
+            quantity: item.quantity,
+            item_price: item.unitPrice,
+          }));
+          const purchaseValue = cart.totalAmount + (shippingMethod ? (Number(shippingMethod.price) || 0) : 0);
+          const purchaseCurrency = (cart.currency || "EGP") as string;
+          sessionStorage.setItem(
+            "fbq:purchase",
+            JSON.stringify({ orderId: orderNumber, currency: purchaseCurrency, value: purchaseValue, items: purchaseItems })
+          );
+        }
+      } catch {}
+      await new Promise((r) => setTimeout(r, 250));
       router.push(`/order/${orderNumber}`);
     } catch (error) {
       console.error("Failed to place order:", error);
