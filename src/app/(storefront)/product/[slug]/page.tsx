@@ -11,15 +11,16 @@ import { storefrontProductsService } from "@/server/storefront/services/products
 import { RecentlyViewedTracker } from "@/components/storefront/organisms/recently-viewed-tracker";
 import { RecentlyViewedCarousel } from "@/components/storefront/organisms/recently-viewed-carousel";
 import { RecommendationsRail } from "@/components/storefront/organisms/recommendations-rail";
+import { ProductViewTracker } from "@/components/storefront/organisms/product-view-tracker";
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  
+
   try {
-    
+
     const product: Product = await api.get(`/api/storefront/products/${slug}`);
-    
+
     return {
       title: product.metaTitle || product.name,
       description: product.metaDescription || product.shortDescription || product.description,
@@ -77,6 +78,15 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           slug: product.slug,
           price: product.price,
           primaryImage: product.images?.[0]?.url,
+        }}
+      />
+      <ProductViewTracker
+        product={{
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          currency: "EGP",
+          category: product.categories?.[0]?.name,
         }}
       />
       {/* Breadcrumbs */}

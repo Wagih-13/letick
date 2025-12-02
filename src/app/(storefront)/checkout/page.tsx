@@ -17,6 +17,7 @@ import { useCurrency } from "@/components/storefront/providers/currency-provider
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cart.store";
+import { trackInitiateCheckout } from "@/lib/fbq";
 
 type CheckoutStep = "shipping" | "shipping-method" | "payment" | "review";
 
@@ -74,6 +75,21 @@ export default function CheckoutPage() {
       router.push("/cart");
     }
   }, [cart, router]);
+
+  // Track InitiateCheckout event when cart is loaded
+  useEffect(() => {
+    if (cart && cart.items.length > 0) {
+      trackInitiateCheckout({
+        currency: cart.currency || "EGP",
+        value: cart.totalAmount,
+        items: cart.items.map((item) => ({
+          id: item.variantId || item.productId,
+          quantity: item.quantity,
+          item_price: item.unitPrice,
+        })),
+      });
+    }
+  }, [cart?.id]); // Only track when cart ID changes (new cart loaded)
 
   const steps = [
     { id: "shipping" as CheckoutStep, label: "Shipping Address", number: 1 },

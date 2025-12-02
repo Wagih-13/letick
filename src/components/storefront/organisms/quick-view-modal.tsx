@@ -22,6 +22,7 @@ import { ShoppingCart, ExternalLink, X } from "lucide-react";
 import type { Product } from "@/types/storefront";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { trackAddToCart } from "@/lib/fbq";
 
 interface QuickViewModalProps {
   productSlug: string | null;
@@ -68,6 +69,18 @@ export function QuickViewModal({
   const handleAddToCart = async () => {
     if (!product) return;
     await addItem(product.id, selectedVariant, quantity);
+
+    // Track AddToCart event
+    trackAddToCart({
+      id: product.id,
+      name: product.name,
+      price: currentPrice,
+      currency: "EGP",
+      category: product.categories?.[0]?.name,
+      variantId: selectedVariant,
+      quantity,
+    });
+
     onClose();
   };
 
@@ -105,12 +118,12 @@ export function QuickViewModal({
       <DialogContent
         showCloseButton={false}
         className="sm:max-w-4xl sm:max-h-[90vh] overflow-y-auto w-[100vw] sm:w-auto h-[80dvh] sm:h-auto rounded-none sm:rounded-lg p-0 sm:p-6"
-  
-    >
+
+      >
         <DialogTitle className="sr-only">
           {product?.name || "Product Quick View"}
         </DialogTitle>
-        
+
         <Button
           variant="ghost"
           size="icon"
@@ -150,11 +163,10 @@ export function QuickViewModal({
                     <button
                       key={image.id}
                       onClick={() => setSelectedImageIndex(index)}
-                      className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                        selectedImageIndex === index
-                          ? "border-primary"
-                          : "border-transparent hover:border-muted-foreground/20"
-                      }`}
+                      className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
+                        ? "border-primary"
+                        : "border-transparent hover:border-muted-foreground/20"
+                        }`}
                     >
                       <Image
                         src={image.url}
@@ -235,8 +247,8 @@ export function QuickViewModal({
                   {isOutOfStock
                     ? "Out of Stock"
                     : isLoading
-                    ? "Adding..."
-                    : "Add to Cart"}
+                      ? "Adding..."
+                      : "Add to Cart"}
                 </Button>
                 {!isOutOfStock && (
                   <Button
@@ -258,7 +270,7 @@ export function QuickViewModal({
               </div>
               {/* Mobile sticky actions */}
               <div className="sm:hidden" aria-hidden>
-                <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+                <div className="relative inset-x-0 bottom-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
                   <div className="grid grid-cols-2 gap-2">
                     <Button
                       size="lg"
