@@ -17,6 +17,7 @@ import { useCurrency } from "@/components/storefront/providers/currency-provider
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cart.store";
+import { trackInitiateCheckout, trackPurchase } from "@/lib/fbq";
 
 type CheckoutStep = "shipping" | "shipping-method" | "payment" | "review";
 
@@ -32,6 +33,7 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<any>({ type: "cash_on_delivery" });
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const { format } = useCurrency();
+  const [initTracked, setInitTracked] = useState(false);
 
   useEffect(() => {
     fetchCart({ mode: isBuyNow ? "buy-now" : "normal" });
@@ -74,6 +76,23 @@ export default function CheckoutPage() {
       router.push("/cart");
     }
   }, [cart, router]);
+
+  // Track InitiateCheckout once when cart is loaded and has items
+  useEffect(() => {
+    if (initTracked) return;
+    if (!cart || cart.items.length === 0) return;
+    const items = cart.items.map((item) => ({
+      id: item.productId,
+      quantity: item.quantity,
+      item_price: item.unitPrice,
+    }));
+    trackInitiateCheckout({
+      currency: (cart.currency || "EGP") as string,
+      value: cart.totalAmount,
+      items,
+    });
+    setInitTracked(true);
+  }, [cart, initTracked]);
 
   const steps = [
     { id: "shipping" as CheckoutStep, label: "Shipping Address", number: 1 },
@@ -143,6 +162,21 @@ export default function CheckoutPage() {
           await fetchCart();
         } catch { /* ignore */ }
       }
+      try {
+        if (cart && cart.items.length > 0) {
+          const purchaseItems = cart.items.map((item) => ({
+            id: item.productId,
+            quantity: item.quantity,
+            item_price: item.unitPrice,
+          }));
+          const purchaseValue = cart.totalAmount + (shippingMethod ? (Number(shippingMethod.price) || 0) : 0);
+          trackPurchase({
+            currency: (cart.currency || "EGP") as string,
+            value: purchaseValue,
+            items: purchaseItems,
+          });
+        }
+      } catch {}
       const orderNumber = data.data?.orderNumber ?? data.data?.id;
       toast.success("Order placed successfully");
       router.push(`/order/${orderNumber}`);

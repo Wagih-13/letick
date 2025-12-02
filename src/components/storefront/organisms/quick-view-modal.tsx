@@ -22,6 +22,7 @@ import { ShoppingCart, ExternalLink, X } from "lucide-react";
 import type { Product } from "@/types/storefront";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { trackAddToCart } from "@/lib/fbq";
 
 interface QuickViewModalProps {
   productSlug: string | null;
@@ -69,6 +70,14 @@ export function QuickViewModal({
     if (!product) return;
     await addItem(product.id, selectedVariant, quantity);
     onClose();
+    trackAddToCart({
+      id: product.id,
+      name: product.name,
+      price: Number(currentPrice),
+      category: product.categories?.[0]?.name,
+      variantId: selectedVariant,
+      quantity,
+    });
   };
 
   const handleBuyNow = async () => {

@@ -14,6 +14,7 @@ import { useWishlistStore } from "@/stores/wishlist.store";
 import type { Product } from "@/types/storefront";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { trackAddToCart, trackAddToWishlist } from "@/lib/fbq";
 
 interface ProductInfoProps {
   product: Product;
@@ -40,6 +41,14 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
   const handleAddToCart = async () => {
     await addItem(product.id, selectedVariant, quantity);
+    trackAddToCart({
+      id: product.id,
+      name: product.name,
+      price: Number(currentPrice),
+      category: product.categories?.[0]?.name,
+      variantId: selectedVariant,
+      quantity,
+    });
   };
 
   // Highlight bundle offer if applicable
@@ -99,7 +108,15 @@ export function ProductInfo({ product }: ProductInfoProps) {
   };
 
   const handleWishlist = () => {
-    // Persist via API if logged-in, otherwise local storage fallback handled in store
+    if (!isInWishlist) {
+      trackAddToWishlist({
+        id: product.id,
+        name: product.name,
+        price: Number(currentPrice),
+        category: product.categories?.[0]?.name,
+        variantId: selectedVariant,
+      });
+    }
     toggleWishlist({
       id: product.id,
       name: product.name,
